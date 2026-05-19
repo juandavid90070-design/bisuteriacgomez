@@ -1449,8 +1449,13 @@ const store = {
         localStorage.setItem(k, JSON.stringify(v));
         return v;
       }
-    } catch {}
-    return def;
+      // Supabase devolvió null (clave no existe aún) — devolver null para inicializar
+      return null;
+    } catch {
+      // Error de red — usar localStorage como respaldo
+      const local = this.get(k);
+      return local !== null ? local : null;
+    }
   }
 };
 
@@ -3708,12 +3713,12 @@ window.addEventListener('scroll', () => {
     store.loadFromCloud(APP_K, {})
   ]);
 
-  // Solo inicializar con defaults si Supabase devuelve null (primera vez, nunca se ha guardado)
-  if (cloudProds === null) store.set(PROD_K, DEF_PRODS);
-  if (cloudCats === null) store.set(CAT_K, DEF_CATS);
-  if (cloudBanners === null) store.set(BANNER_K, DEF_BANNERS);
-  if (cloudStickers === null) store.set(STICKER_K, DEF_STICKERS);
-  if (cloudFaq === null) store.set(FAQ_K, DEF_FAQ);
+  // Solo inicializar con defaults si es primera vez (null de Supabase Y sin localStorage)
+  if (cloudProds === null && !store.get(PROD_K)) store.set(PROD_K, DEF_PRODS);
+  if (cloudCats === null && !store.get(CAT_K)) store.set(CAT_K, DEF_CATS);
+  if (cloudBanners === null && !store.get(BANNER_K)) store.set(BANNER_K, DEF_BANNERS);
+  if (cloudStickers === null && !store.get(STICKER_K)) store.set(STICKER_K, DEF_STICKERS);
+  if (cloudFaq === null && !store.get(FAQ_K)) store.set(FAQ_K, DEF_FAQ);
 
   AUTO_BACKUP.init();
 
