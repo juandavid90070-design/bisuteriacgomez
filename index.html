@@ -1371,15 +1371,15 @@ const AUTO_BACKUP = {
       this.create();
     }
   },
-  create() {
-    const data = {
-      products: getProds(),
-      categories: getCats(),
-      reviews: getRevs(),
-      faq: getFAQ(),
-      appearance: getApp(),
-      timestamp: new Date().toISOString()
-    };
+  async create() {
+    const [products, categories, reviews, faq, appearance] = await Promise.all([
+      store.loadFromCloud(PROD_K, getProds()),
+      store.loadFromCloud(CAT_K, getCats()),
+      store.loadFromCloud(REV_K, getRevs()),
+      store.loadFromCloud(FAQ_K, getFAQ()),
+      store.loadFromCloud(APP_K, getApp())
+    ]);
+    const data = { products, categories, reviews, faq, appearance, timestamp: new Date().toISOString() };
     localStorage.setItem('bcg_auto_backup', JSON.stringify(data));
     localStorage.setItem('bcg_last_backup', Date.now().toString());
   },
@@ -3705,12 +3705,12 @@ window.addEventListener('scroll', () => {
 
   // ── Cargar datos desde Supabase (fuente de verdad) ──
   const [cloudProds, cloudCats, cloudBanners, cloudStickers, cloudFaq, cloudApp] = await Promise.all([
-    store.loadFromCloud(PROD_K, DEF_PRODS),
-    store.loadFromCloud(CAT_K, DEF_CATS),
-    store.loadFromCloud(BANNER_K, DEF_BANNERS),
-    store.loadFromCloud(STICKER_K, DEF_STICKERS),
-    store.loadFromCloud(FAQ_K, DEF_FAQ),
-    store.loadFromCloud(APP_K, {})
+    store.loadFromCloud(PROD_K, null),
+    store.loadFromCloud(CAT_K, null),
+    store.loadFromCloud(BANNER_K, null),
+    store.loadFromCloud(STICKER_K, null),
+    store.loadFromCloud(FAQ_K, null),
+    store.loadFromCloud(APP_K, null)
   ]);
 
   // Solo inicializar con defaults si es primera vez (null de Supabase Y sin localStorage)
@@ -3719,8 +3719,6 @@ window.addEventListener('scroll', () => {
   if (cloudBanners === null && !store.get(BANNER_K)) store.set(BANNER_K, DEF_BANNERS);
   if (cloudStickers === null && !store.get(STICKER_K)) store.set(STICKER_K, DEF_STICKERS);
   if (cloudFaq === null && !store.get(FAQ_K)) store.set(FAQ_K, DEF_FAQ);
-
-  AUTO_BACKUP.init();
 
   applyApp();
   renderTicker();
@@ -3731,6 +3729,7 @@ window.addEventListener('scroll', () => {
   renderAll();
   CART.updateCount();
   setTimeout(() => PURCHASE_NOTIF.init(), 10000);
+  setTimeout(() => AUTO_BACKUP.init(), 3000); // después de que Supabase ya cargó
   
   const a = getApp();
   const waNum = a.waNum || WA_NUM;
