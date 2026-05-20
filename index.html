@@ -18,7 +18,7 @@
 <meta name="twitter:title" content="Bisutería C. Gómez | Accesorios con Elegancia"/>
 <meta name="twitter:description" content="Bisutería fina y accesorios exclusivos. Aretes, collares, pulseras y más. Pide por WhatsApp con envío a todo Colombia."/>
 <meta name="twitter:image" content="https://bisuteriacgomez.com/og-image.jpg"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://connect.facebook.net https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://mbxqxyuogxzujyaqnncw.supabase.co https://*.supabase.co https://www.facebook.com https://connect.facebook.net https://www.google-analytics.com; frame-src 'none'; object-src 'none';"/>
+
 <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
 <title>Bisutería C. Gómez | Accesorios con Elegancia</title>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
@@ -1449,12 +1449,17 @@ const store = {
         localStorage.setItem(k, JSON.stringify(v));
         return v;
       }
-      // Supabase devolvió null (clave no existe aún) — devolver null para inicializar
-      return null;
-    } catch {
-      // Error de red — usar localStorage como respaldo
+      // Supabase no tiene esta clave aún — revisar localStorage antes de retornar null
       const local = this.get(k);
-      return local !== null ? local : null;
+      return local; // puede ser null si realmente es primera vez
+    } catch {
+      // Error de red — usar localStorage como respaldo, nunca defaults
+      const local = this.get(k);
+      if (local !== null) {
+        console.warn('Supabase no disponible, usando caché local para', k);
+        return local;
+      }
+      return null;
     }
   }
 };
@@ -3713,9 +3718,11 @@ window.addEventListener('scroll', () => {
     store.loadFromCloud(APP_K, null)
   ]);
 
-  // Solo inicializar con defaults si es primera vez (null de Supabase Y sin localStorage)
-  if (cloudProds === null && !store.get(PROD_K)) store.set(PROD_K, DEF_PRODS);
-  if (cloudCats === null && !store.get(CAT_K)) store.set(CAT_K, DEF_CATS);
+  // Inicializar con defaults SOLO si no hay nada ni en Supabase ni en localStorage
+  const localProds = store.get(PROD_K);
+  const localCats = store.get(CAT_K);
+  if (cloudProds === null && (!localProds || !localProds.length)) store.set(PROD_K, DEF_PRODS);
+  if (cloudCats === null && (!localCats || !localCats.length)) store.set(CAT_K, DEF_CATS);
   if (cloudBanners === null && !store.get(BANNER_K)) store.set(BANNER_K, DEF_BANNERS);
   if (cloudStickers === null && !store.get(STICKER_K)) store.set(STICKER_K, DEF_STICKERS);
   if (cloudFaq === null && !store.get(FAQ_K)) store.set(FAQ_K, DEF_FAQ);
