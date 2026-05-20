@@ -1410,12 +1410,12 @@ const SB = {
     const res = await fetch(`${SB_URL}/rest/v1/store?key=eq.${encodeURIComponent(key)}&select=value`, {
       headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
     });
-    if (!res.ok) return null;
+    if (!res.ok) { console.error('SB.get error:', res.status, res.statusText, key); return null; }
     const rows = await res.json();
     return rows.length ? rows[0].value : null;
   },
   async set(key, value) {
-    await fetch(`${SB_URL}/rest/v1/store`, {
+    const res = await fetch(`${SB_URL}/rest/v1/store`, {
       method: 'POST',
       headers: {
         apikey: SB_KEY,
@@ -1425,6 +1425,7 @@ const SB = {
       },
       body: JSON.stringify({ key, value, updated_at: new Date().toISOString() })
     });
+    if (!res.ok) console.error('SB.set error:', res.status, res.statusText, key);
     try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
   }
 };
