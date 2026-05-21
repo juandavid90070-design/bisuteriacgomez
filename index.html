@@ -868,7 +868,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
           <div id="csvSection" style="display:none;background:rgba(255,255,255,.03);border:1px solid rgba(201,160,80,.18);border-radius:14px;padding:18px;margin-bottom:20px">
             <h4 style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--gl);font-size:1.1rem;margin-bottom:10px">📥 Importar productos desde CSV</h4>
             <p style="font-family:'Lato',sans-serif;font-size:.74rem;color:rgba(255,255,255,.4);margin-bottom:12px;line-height:1.6">
-              El CSV debe tener estas columnas: <strong style="color:rgba(201,160,80,.8)">ref, nombre, precio, categoria, subcategoria, badge, imagen, imagen2, imagen3</strong><br>
+              El CSV debe tener estas columnas: <strong style="color:rgba(201,160,80,.8)">ref, nombre, precio, categoria, subcategoria, badge, imagen, imagen2, imagen3, imagen4, imagen5</strong><br>
               Las columnas de imagen aceptan links directos de Google Drive, ImgBB u otras URLs públicas. Los links de Drive se convierten automáticamente.<br>
               Columnas opcionales con valor predeterminado: <em style="color:rgba(255,255,255,.35)">subcategoria, badge, imagen, imagen2, imagen3</em> (vacías por defecto).
             </p>
@@ -1428,8 +1428,8 @@ const store = {
     catch { return def; }
   },
   set(k, v) {
-    try { localStorage.setItem(k, JSON.stringify(v)); } catch {}
-    SB.set(k, v).catch(() => {});
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) { console.warn("localStorage error", e); }
+    SB.set(k, v).catch(err => { console.warn("Supabase save error:", err); });
   },
   merge(k, obj) { this.set(k, {...this.get(k,{}), ...obj}); },
   async loadFromCloud(k, def=null) {
@@ -1576,9 +1576,8 @@ function getImages(p) {
   if(p.image) return [p.image];
   return [];
 }
-function getProds() { return store.get(PROD_K, DEF_PRODS); }
+function getProds() { return store.get(PROD_K, []); }
 function saveProds(p) { SEC.guard('modificar productos'); store.set(PROD_K, p); }
-if(!localStorage.getItem(PROD_K)) store.set(PROD_K, DEF_PRODS);
 
 // ═══════════════════════════════════════════════════
 // REVIEWS
@@ -2337,8 +2336,8 @@ const CSV_HEADER_MAP = {
   'emoji': 'emoji', 'ícono': 'emoji', 'icono': 'emoji',
   'descripcion': 'desc', 'descripción': 'desc', 'desc': 'desc', 'description': 'desc',
   'imagen': 'imgurl', 'image': 'imgurl', 'foto': 'imgurl', 'url': 'imgurl',
-  'imagen1': 'imgurl', 'imagen2': 'imgurl2', 'imagen3': 'imgurl3',
-  'foto1': 'imgurl', 'foto2': 'imgurl2', 'foto3': 'imgurl3',
+  'imagen1': 'imgurl', 'imagen2': 'imgurl2', 'imagen3': 'imgurl3', 'imagen4': 'imgurl4', 'imagen5': 'imgurl5',
+  'foto1': 'imgurl', 'foto2': 'imgurl2', 'foto3': 'imgurl3', 'foto4': 'imgurl4', 'foto5': 'imgurl5',
 };
 
 function parseCSV(text) {
@@ -2372,6 +2371,8 @@ function parseCSV(text) {
     const rawImgUrl  = row.imgurl  || '';
     const rawImgUrl2 = row.imgurl2 || '';
     const rawImgUrl3 = row.imgurl3 || '';
+    const rawImgUrl4 = row.imgurl4 || '';
+    const rawImgUrl5 = row.imgurl5 || '';
 
     // Convertir video de Drive a embed
     function convertDriveVideoUrl(url) {
@@ -2401,7 +2402,9 @@ function parseCSV(text) {
     const img1 = csvConvertDrive(rawImgUrl);
     const img2 = csvConvertDrive(rawImgUrl2);
     const img3 = csvConvertDrive(rawImgUrl3);
-    const imagesArr = [img1, img2, img3].filter(Boolean);
+    const img4 = csvConvertDrive(rawImgUrl4);
+    const img5 = csvConvertDrive(rawImgUrl5);
+    const imagesArr = [img1, img2, img3, img4, img5].filter(Boolean);
 
     const p = {
       id:     row.id || '',
@@ -2469,11 +2472,11 @@ document.getElementById('cancelCsv').addEventListener('click', () => {
 });
 
 document.getElementById('downloadCsvTemplate').addEventListener('click', () => {
-  const header = 'ref,nombre,precio,categoria,subcategoria,badge,descripcion,imagen,imagen2,imagen3';
+  const header = 'ref,nombre,precio,categoria,subcategoria,badge,descripcion,imagen,imagen2,imagen3,imagen4,imagen5';
   const example = [
-    'COL-019,Collar Mariposa Dorado,42000,collares,Gargantillas,nuevo,Collar bañado en oro con dije mariposa delicado.,https://drive.google.com/uc?export=view&id=TU_ID_AQUI,,',
-    'ARE-020,Aretes Luna Rosa,28000,aretes,Colgantes,oferta,Aretes colgantes con diseño de luna en resina rosa.,https://i.ibb.co/ejemplo.jpg,,',
-    'PUL-021,Pulsera Cristal Azul,25000,pulseras,,,Pulsera con cristales azules bañada en plata.,,,',
+    'COL-019,Collar Mariposa Dorado,42000,collares,Gargantillas,nuevo,Collar bañado en oro con dije mariposa delicado.,https://drive.google.com/uc?export=view&id=TU_ID_AQUI,,,,',
+    'ARE-020,Aretes Luna Rosa,28000,aretes,Colgantes,oferta,Aretes colgantes con diseño de luna en resina rosa.,https://i.ibb.co/ejemplo.jpg,,,,',
+    'PUL-021,Pulsera Cristal Azul,25000,pulseras,,,Pulsera con cristales azules bañada en plata.,,,,,',
   ].join('\n');
   const blob = new Blob([header + '\n' + example], { type: 'text/csv;charset=utf-8;' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
@@ -3682,14 +3685,14 @@ window.addEventListener('scroll', () => {
     store.loadFromCloud(APP_K, null)
   ]);
 
-  // Inicializar con defaults SOLO si no hay nada ni en Supabase ni en localStorage
+  // Inicializar defaults SOLO si es primera vez real (nada en Supabase NI en localStorage)
   const localProds = store.get(PROD_K);
   const localCats = store.get(CAT_K);
-  if (cloudProds === null && (!localProds || !localProds.length)) store.set(PROD_K, DEF_PRODS);
-  if (cloudCats === null && (!localCats || !localCats.length)) store.set(CAT_K, DEF_CATS);
-  if (cloudBanners === null && !store.get(BANNER_K)) store.set(BANNER_K, DEF_BANNERS);
-  if (cloudStickers === null && !store.get(STICKER_K)) store.set(STICKER_K, DEF_STICKERS);
-  if (cloudFaq === null && !store.get(FAQ_K)) store.set(FAQ_K, DEF_FAQ);
+  if (cloudProds === null && localProds === null) { console.log("Primera vez: inicializando productos"); store.set(PROD_K, DEF_PRODS); }
+  if (cloudCats === null && localCats === null) { console.log("Primera vez: inicializando categorías"); store.set(CAT_K, DEF_CATS); }
+  if (cloudBanners === null && store.get(BANNER_K) === null) store.set(BANNER_K, DEF_BANNERS);
+  if (cloudStickers === null && store.get(STICKER_K) === null) store.set(STICKER_K, DEF_STICKERS);
+  if (cloudFaq === null && store.get(FAQ_K) === null) store.set(FAQ_K, DEF_FAQ);
 
   applyApp();
   renderTicker();
