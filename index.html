@@ -208,15 +208,7 @@ header{position:sticky;top:0;z-index:200;background:rgba(255,245,248,.97);backdr
 .gallery-add-cart{width:100%;padding:12px;border-radius:var(--rbtn);background:linear-gradient(135deg,var(--g),#a07830);color:#fff;border:none;font-family:'Lato',sans-serif;font-weight:700;cursor:pointer;transition:all .2s}
 .gallery-add-cart:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(201,160,80,.3)}
 
-/* ── PURCHASE NOTIFICATION ────────────────── */
-.purchase-toast{position:fixed;bottom:80px;left:20px;z-index:900;background:var(--w);border-radius:12px;padding:12px 16px;box-shadow:0 4px 20px rgba(0,0,0,.15);display:flex;align-items:center;gap:12px;transform:translateX(-150%);transition:transform .4s cubic-bezier(.68,-.55,.265,1.55);max-width:280px;border:1px solid rgba(201,160,80,.2)}
-.purchase-toast.show{transform:translateX(0)}
-.pt-img{font-size:1.8rem;flex-shrink:0}
-.pt-info{display:flex;flex-direction:column;gap:2px}
-.pt-name{font-family:'Lato',sans-serif;font-size:.75rem;font-weight:700;color:var(--td)}
-.pt-product{font-family:'Lato',sans-serif;font-size:.68rem;color:var(--tm)}
-.pt-time{font-family:'Lato',sans-serif;font-size:.62rem;color:#a07890}
-@media(max-width:480px){.purchase-toast{display:none}}
+
 
 /* ── FAQ FLOATING BUTTON & MODAL ─────────── */
 .faq-fab{position:fixed;bottom:140px;right:16px;z-index:300;background:var(--w);border:2px solid var(--g);border-radius:var(--rbtn);padding:10px 16px;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(201,160,80,.25);transition:all .2s;font-family:'Lato',sans-serif;font-weight:600;color:var(--td)}
@@ -728,9 +720,6 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   Escríbenos
 </a>
 <button class="scroll-top" id="stBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Arriba">↑</button>
-
-<!-- PURCHASE NOTIFICATION -->
-<div class="purchase-toast" id="purchaseToast"></div>
 
 <!-- FAQ FLOATING BUTTON -->
 <button class="faq-fab" id="faqFab">
@@ -1711,34 +1700,8 @@ function stars(r) { return '★'.repeat(r) + '☆'.repeat(5-r); }
 const CART_SVG = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>`;
 
 // ═══════════════════════════════════════════════════
-// PURCHASE NOTIFICATIONS
 // ═══════════════════════════════════════════════════
-const PURCHASE_NOTIF = {
-  names: ['María','Ana','Carla','Sofía','Valentina','Camila','Laura','Daniela','Andrea','Patricia'],
-  cities: ['Bogotá','Medellín','Cali','Barranquilla','Cartagena','Bucaramanga','Pereira','Manizales'],
-  products: [],
-  init() {
-    this.products = getProds().slice(0, 10);
-    setTimeout(() => this.show(), 8000);
-  },
-  show() {
-    const name = this.names[Math.floor(Math.random() * this.names.length)];
-    const city = this.cities[Math.floor(Math.random() * this.cities.length)];
-    const product = this.products[Math.floor(Math.random() * this.products.length)];
-    const toast = document.getElementById('purchaseToast');
-    toast.innerHTML = `
-      <div class="pt-img">🛍️</div>
-      <div class="pt-info">
-        <span class="pt-name">${name} de ${city}</span>
-        <span class="pt-product">compró ${product.name}</span>
-        <span class="pt-time">hace ${Math.floor(Math.random()*5)+1} minutos</span>
-      </div>
-    `;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 4500);
-    setTimeout(() => this.show(), Math.random()*60000 + 40000);
-  }
-};
+
 
 // ═══════════════════════════════════════════════════
 // GALLERY
@@ -3736,7 +3699,6 @@ window.addEventListener('scroll', () => {
   renderSubPills();
   renderAll();
   CART.updateCount();
-  setTimeout(() => PURCHASE_NOTIF.init(), 10000);
   setTimeout(() => AUTO_BACKUP.init(), 3000); // después de que Supabase ya cargó
   
   const a = getApp();
