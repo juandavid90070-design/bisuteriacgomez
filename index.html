@@ -1505,7 +1505,7 @@ const DEF_FAQ = [
   {id:'f3',q:'🔄 ¿Tienen política de devoluciones?',a:'Sí, puedes cambiar el producto dentro de los 7 días siguientes a la compra si está en perfecto estado.',emoji:'🔄'},
   {id:'f4',q:'✨ ¿Las piezas son bañadas en oro?',a:'Nuestra bisutería tiene baño de oro 18k de alta calidad con garantía de 3 meses.',emoji:'✨'},
 ];
-function getFAQ() { return store.get(FAQ_K, DEF_FAQ); }
+function getFAQ() { return store.get(FAQ_K, []); }
 function saveFAQ(f) { SEC.guard('modificar FAQ'); store.set(FAQ_K, f); }
 
 // ═══════════════════════════════════════════════════
@@ -1553,7 +1553,7 @@ const DEF_CATS = [
   {id:'conjuntos',name:'Conjuntos',emoji:'🎁',subs:['Dúos','Tríos','Full set']},
   {id:'tiaras',name:'Tiaras & Accesorios',emoji:'👑',subs:['Tiaras','Diademas','Horquillas']},
 ];
-function getCats() { return store.get(CAT_K, DEF_CATS); }
+function getCats() { return store.get(CAT_K, []); }
 function saveCats(c) { SEC.guard('modificar categorías'); store.set(CAT_K, c); }
 
 // ═══════════════════════════════════════════════════
@@ -1605,8 +1605,8 @@ const DEF_STICKERS = [
   {id:'s1',text:'¡Nuevas llegadas! ✨',pos:'top-left',visible:true},
   {id:'s2',text:'Ofertas especiales 🌸',pos:'bottom-right',visible:false},
 ];
-function getBanners() { return store.get(BANNER_K, DEF_BANNERS); }
-function getStickers() { return store.get(STICKER_K, DEF_STICKERS); }
+function getBanners() { return store.get(BANNER_K, []); }
+function getStickers() { return store.get(STICKER_K, []); }
 function getApp() { return store.get(APP_K, {}); }
 
 const COLOR_SCHEMES = {
