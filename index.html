@@ -75,13 +75,39 @@ header{position:sticky;top:0;z-index:200;background:rgba(255,245,248,.97);backdr
 .mob-sb input:focus{border-color:var(--g)}
 
 /* ── HERO ─────────────────────────────────── */
-.hero{position:relative;overflow:hidden;text-align:center;background:linear-gradient(135deg,#fce8ef 0%,#f8d8e8 45%,#f2e0f5 100%);padding:clamp(40px,8vw,88px) var(--px) clamp(32px,6vw,72px)}
-.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.25}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 15% 85%,rgba(201,160,80,.08),transparent),radial-gradient(ellipse 55% 60% at 85% 15%,rgba(212,120,154,.12),transparent)}
-.hero-c{position:relative;z-index:1}
-.hero-ey{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(.78rem,2vw,1rem);color:var(--rm);letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px}
-.hero h1{font-family:'Great Vibes',cursive;font-size:clamp(2.3rem,9vw,5.5rem);color:var(--g);text-shadow:0 2px 16px rgba(201,160,80,.2);line-height:1.1;margin-bottom:14px}
-.hero p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(.92rem,2.5vw,1.15rem);color:var(--tm);max-width:540px;margin:0 auto 28px;line-height:1.7}
+.hero{position:relative;overflow:hidden;text-align:center;background:linear-gradient(145deg,#fff5f8 0%,#fce8ef 35%,#f8d8e8 65%,#fce4f0 100%);padding:clamp(48px,9vw,96px) var(--px) clamp(40px,7vw,80px);min-height:clamp(420px,70vw,580px);display:flex;align-items:center;justify-content:center}
+.hero-blob{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none}
+.hero-blob-1{width:380px;height:380px;background:rgba(242,160,190,0.25);top:-100px;right:-80px;animation:blobFloat 7s ease-in-out infinite alternate}
+.hero-blob-2{width:280px;height:280px;background:rgba(201,160,80,0.12);bottom:-60px;left:-60px;animation:blobFloat 9s ease-in-out infinite alternate-reverse}
+.hero-blob-3{width:200px;height:200px;background:rgba(255,180,210,0.3);top:40%;left:5%;animation:blobFloat 6s ease-in-out infinite alternate}
+@keyframes blobFloat{from{transform:translate(0,0) scale(1)}to{transform:translate(15px,20px) scale(1.08)}}
+.hero-dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,rgba(201,160,80,0.18) 1.5px,transparent 1.5px);background-size:28px 28px;opacity:0.5}
+.bg-emojis{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bge{position:absolute;font-size:1.6rem;opacity:0;user-select:none;will-change:transform}
+.hsticker{position:absolute;pointer-events:none;user-select:none;animation:hstickerFloat linear infinite;filter:drop-shadow(0 2px 8px rgba(180,73,106,0.15))}
+@keyframes hstickerFloat{0%{transform:translateY(0) rotate(var(--r0)) scale(1)}30%{transform:translateY(-12px) rotate(calc(var(--r0) + 6deg)) scale(1.04)}60%{transform:translateY(-6px) rotate(calc(var(--r0) - 4deg)) scale(0.97)}100%{transform:translateY(0) rotate(var(--r0)) scale(1)}}
+.hsparkle{position:absolute;pointer-events:none;animation:hsparkleP ease-in-out infinite}
+@keyframes hsparkleP{0%,100%{opacity:0;transform:scale(0.4) rotate(0deg)}40%,60%{opacity:1;transform:scale(1) rotate(20deg)}}
+.hero-c{position:relative;z-index:10;max-width:560px;width:100%}
+.hero-ey-new{display:inline-flex;align-items:center;gap:10px;font-size:10.5px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:#b5496a;margin-bottom:18px;opacity:0;animation:hriseUp 0.7s ease 0.1s forwards}
+.hey-line{width:28px;height:1.5px;background:linear-gradient(90deg,transparent,#d4789a);border-radius:2px}
+.hey-line-r{transform:scaleX(-1)}
+.hero h1{font-family:'Great Vibes',cursive;font-size:clamp(2.8rem,10vw,5rem);color:#3a1a28;line-height:1.05;margin:0 0 6px;text-shadow:0 2px 20px rgba(180,73,106,0.12);opacity:0;animation:hriseUp 0.9s ease 0.3s forwards}
+.hero-sub-script{font-family:'Cormorant Garamond',serif;font-size:clamp(0.82rem,2.2vw,1rem);font-weight:300;font-style:italic;letter-spacing:0.3em;text-transform:uppercase;color:#c9a050;margin-bottom:18px;opacity:0;animation:hriseUp 0.9s ease 0.45s forwards}
+.gdiv{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 auto 18px;opacity:0;animation:hriseUp 0.8s ease 0.55s forwards}
+.gdiv-line{width:40px;height:1px;background:linear-gradient(90deg,transparent,rgba(201,160,80,0.5),transparent)}
+.hero p#heroSub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.4vw,1.18rem);color:#7a3a54;max-width:400px;margin:0 auto 28px;line-height:1.75;opacity:0;animation:hriseUp 0.9s ease 0.65s forwards}
+.hero-btns-new{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;opacity:0;animation:hriseUp 0.9s ease 0.8s forwards}
+.hbtn-main{padding:13px 30px;background:linear-gradient(135deg,#b5496a 0%,#d4789a 50%,#b5496a 100%);background-size:200%;color:#fff;font-family:'Lato',sans-serif;font-size:11.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;border:none;border-radius:50px;cursor:pointer;box-shadow:0 4px 16px rgba(181,73,106,0.28);transition:all 0.3s ease;text-decoration:none;display:inline-block;animation:hshimmerBtn 3s linear infinite}
+.hbtn-main:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(181,73,106,0.38)}
+@keyframes hshimmerBtn{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes btnShimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+.hbtn-alt{padding:12px 26px;background:rgba(255,255,255,0.7);color:#b5496a;font-family:'Lato',sans-serif;font-size:11.5px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;border:1.5px solid rgba(181,73,106,0.25);border-radius:50px;cursor:pointer;transition:all 0.3s ease;text-decoration:none;display:inline-block}
+.hbtn-alt:hover{border-color:#b5496a;background:rgba(255,255,255,0.9);transform:translateY(-2px)}
+.hero-trust{display:flex;gap:18px;justify-content:center;align-items:center;margin-top:28px;flex-wrap:wrap;opacity:0;animation:hriseUp 0.9s ease 1s forwards}
+.htrust-item{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:400;letter-spacing:0.04em;color:#b87090}
+.htrust-dot{width:5px;height:5px;border-radius:50%;background:#d4789a;flex-shrink:0}
+@keyframes hriseUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 .gdiv{display:flex;align-items:center;justify-content:center;gap:12px;margin:20px auto 0}
 .gdiv span{display:inline-block;width:clamp(28px,5vw,60px);height:1px;background:linear-gradient(90deg,transparent,var(--g))}
 .gdiv span:last-child{background:linear-gradient(90deg,var(--g),transparent)}
@@ -111,33 +137,36 @@ header{position:sticky;top:0;z-index:200;background:rgba(255,245,248,.97);backdr
 .rcnt{font-family:'Lato',sans-serif;font-size:.82rem;color:var(--rm)}
 
 /* ── PRODUCT GRID ─────────────────────────── */
-.prod-sec{max-width:var(--mw);margin:26px auto clamp(40px,8vw,80px);padding:0 var(--px)}
-.prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(10px,2.5vw,24px)}
-.pcard{background:var(--w);border-radius:var(--rcard);border:1px solid rgba(201,160,80,.15);overflow:hidden;box-shadow:var(--ss);display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s,border-color .25s;-webkit-tap-highlight-color:transparent}
-.pcard:hover{transform:translateY(-6px);box-shadow:var(--sh);border-color:rgba(201,160,80,.35)}
-.cimgw{position:relative;background:linear-gradient(135deg,#fce8ef,#f8d0e0,#fce8ef);height:clamp(160px,44vw,210px);display:flex;align-items:center;justify-content:center;overflow:hidden}
-.cimgw img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.prod-sec{max-width:var(--mw);margin:0 auto clamp(40px,8vw,80px);padding:0 var(--px)}
+.prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(12px,2.5vw,28px)}
+.pcard{background:#fff;border-radius:20px;border:1.5px solid rgba(201,160,80,.18);overflow:hidden;box-shadow:0 4px 20px rgba(180,73,106,.08);display:flex;flex-direction:column;transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,border-color .3s;-webkit-tap-highlight-color:transparent;position:relative}
+.pcard::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,245,248,0.6) 0%,transparent 60%);pointer-events:none;z-index:0;border-radius:20px}
+.pcard:hover{transform:translateY(-8px) scale(1.012);box-shadow:0 16px 40px rgba(180,73,106,.18),0 4px 12px rgba(201,160,80,.12);border-color:rgba(201,160,80,.45)}
+.cimgw{position:relative;background:linear-gradient(135deg,#fce8ef,#f8d0e0,#fce8ef);height:clamp(170px,46vw,220px);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cimgw::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 55%,rgba(180,73,106,0.08) 100%);pointer-events:none;z-index:1}
+.cimgw img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform .5s cubic-bezier(.34,1.2,.64,1)}
+.pcard:hover .cimgw img{transform:scale(1.06)}
 .emj{font-size:clamp(2.2rem,7vw,4rem);opacity:.7;filter:drop-shadow(0 2px 8px rgba(180,73,106,.22));transition:transform .3s}
 .pcard:hover .emj{transform:scale(1.08)}
 .cbadge{position:absolute;top:10px;left:10px;font-family:'Cormorant Garamond',serif;font-size:clamp(.58rem,1.6vw,.72rem);font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:var(--rbtn);background:linear-gradient(135deg,var(--rd),#8b2f4e);color:var(--gl)}
 .cbadge.nuevo{background:linear-gradient(135deg,var(--g),#a07830);color:#fff}
 .cbadge.oferta{background:linear-gradient(135deg,#e05580,#b03060);color:#fff}
-.cbody{padding:clamp(9px,2.2vw,18px);flex:1;display:flex;flex-direction:column}
+.cbody{padding:clamp(10px,2.4vw,18px);flex:1;display:flex;flex-direction:column;position:relative;z-index:1}
 .cref{font-family:'Lato',sans-serif;font-size:clamp(.58rem,1.4vw,.7rem);letter-spacing:.1em;color:var(--g);text-transform:uppercase;margin-bottom:3px}
-.cname{font-family:'Cormorant Garamond',serif;font-size:clamp(.88rem,2.4vw,1.1rem);font-weight:600;color:var(--td);line-height:1.3;margin-bottom:4px}
+.cname{font-family:'Cormorant Garamond',serif;font-size:clamp(.95rem,2.6vw,1.15rem);font-weight:600;color:#3a1a28;line-height:1.25;margin-bottom:5px}
 .cdesc{font-family:'Lato',sans-serif;font-size:clamp(.7rem,1.7vw,.8rem);color:#a07890;line-height:1.5;flex:1;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .cstars{display:flex;align-items:center;gap:4px;margin-bottom:6px}
 .cstars .stars{font-size:.85rem;letter-spacing:1px}
 .cstars .rcount{font-family:'Lato',sans-serif;font-size:.7rem;color:var(--rm)}
-.cprice{font-family:'Cormorant Garamond',serif;font-size:clamp(.95rem,2.8vw,1.3rem);font-weight:600;color:var(--rd);margin-bottom:8px}
+.cprice{font-family:'Cormorant Garamond',serif;font-size:clamp(1.05rem,3vw,1.4rem);font-weight:700;color:var(--rd);margin-bottom:8px;letter-spacing:.02em}
 .cprice .cur{font-size:.82em;color:var(--rm);font-weight:400;margin-right:2px}
 
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.85}}
 .ot-label{font-weight:600}
 
 .card-btns{display:flex;flex-direction:column;gap:6px}
-.add-cart-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:clamp(8px,2vw,11px) 0;border-radius:var(--rbtn);background:linear-gradient(135deg,var(--g),#a07830);color:#fff;font-family:'Cormorant Garamond',serif;font-size:clamp(.78rem,2.1vw,.94rem);font-weight:600;border:none;cursor:pointer;transition:all .22s;box-shadow:0 3px 10px rgba(201,160,80,.22);-webkit-tap-highlight-color:transparent}
-.add-cart-btn:hover{background:linear-gradient(135deg,#a07830,var(--g));transform:translateY(-1px)}
+.add-cart-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:clamp(9px,2vw,12px) 0;border-radius:var(--rbtn);background:linear-gradient(135deg,#b5496a 0%,#d4789a 50%,#b5496a 100%);background-size:200%;color:#fff;font-family:'Lato',sans-serif;font-size:clamp(.72rem,1.9vw,.86rem);font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer;transition:all .25s;-webkit-tap-highlight-color:transparent;animation:btnShimmer 3s linear infinite;box-shadow:0 3px 12px rgba(181,73,106,.22)}
+.add-cart-btn:hover{transform:scale(1.02);box-shadow:0 6px 20px rgba(181,73,106,.35)}
 .add-cart-btn svg{width:14px;height:14px;flex-shrink:0}
 .wa-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:clamp(8px,2vw,11px) 0;border-radius:var(--rbtn);background:linear-gradient(135deg,var(--rd),#8b2f4e);color:var(--gl);font-family:'Cormorant Garamond',serif;font-size:clamp(.78rem,2.1vw,.94rem);font-weight:600;border:none;cursor:pointer;text-decoration:none;transition:all .22s;box-shadow:0 3px 10px rgba(180,73,106,.22);-webkit-tap-highlight-color:transparent}
 .wa-btn:hover{background:linear-gradient(135deg,#8b2f4e,var(--rd));transform:translateY(-1px)}
@@ -567,6 +596,13 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 
 
 /* ── ZOOM FOTO ────────────────────────────── */
+/* ── CHISPITAS CLICK ─────────────────────── */
+.spark{position:fixed;pointer-events:none;z-index:9999;font-size:1.1rem;animation:sparkFly var(--sd) ease-out forwards}
+@keyframes sparkFly{0%{opacity:1;transform:translate(0,0) scale(1) rotate(0deg)}100%{opacity:0;transform:translate(var(--sx),var(--sy)) scale(0) rotate(var(--sr))}}
+/* ── EXPLOSIÓN BORDE GALLERY ──────────────── */
+.gallery-burst{position:fixed;inset:0;pointer-events:none;z-index:6999;}
+.gburst-particle{position:absolute;border-radius:50%;animation:gburstFly var(--gd) cubic-bezier(.2,0,.8,1) forwards}
+@keyframes gburstFly{0%{opacity:1;transform:translate(var(--gx0),var(--gy0)) scale(1)}100%{opacity:0;transform:translate(var(--gx1),var(--gy1)) scale(0)}}
 .img-zoom-modal{position:fixed;inset:0;z-index:800;display:none;align-items:center;justify-content:center}
 .img-zoom-modal.open{display:flex}
 .img-zoom-back{position:absolute;inset:0;background:rgba(10,2,8,.92);backdrop-filter:blur(6px)}
@@ -592,6 +628,9 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 </style>
 </head>
 <body>
+
+<!-- FONDO EMOJIS DECORATIVOS -->
+<div class="bg-emojis" aria-hidden="true"></div>
 
 <!-- TOP TICKER -->
 <div class="top-ticker"><div class="ticker-track" id="tickerTrack"></div></div>
@@ -641,19 +680,51 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 
 <!-- HERO -->
 <section class="hero" id="heroSection">
-  <div class="hero-bg" id="heroBg"></div>
-  <span class="hrose r1">🌸</span><span class="hrose r2">💐</span>
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-blob hero-blob-3"></div>
+  <div class="hero-dots"></div>
+
+  <div class="hsticker" style="top:8%;left:4%;--r0:-12deg;animation-duration:4.2s;animation-delay:0s;font-size:2.2rem">🍓</div>
+  <div class="hsticker" style="top:14%;right:6%;--r0:10deg;animation-duration:5s;animation-delay:0.5s;font-size:2.4rem">💅</div>
+  <div class="hsticker" style="top:52%;left:2%;--r0:-8deg;animation-duration:4.7s;animation-delay:1s;font-size:1.8rem">✨</div>
+  <div class="hsticker" style="top:68%;right:4%;--r0:15deg;animation-duration:5.5s;animation-delay:0.3s;font-size:2rem">🌸</div>
+  <div class="hsticker" style="top:38%;right:2%;--r0:-6deg;animation-duration:4s;animation-delay:0.8s;font-size:1.6rem">⭐</div>
+  <div class="hsticker" style="top:78%;left:7%;--r0:8deg;animation-duration:6s;animation-delay:1.5s;font-size:1.9rem">🍓</div>
+  <div class="hsticker" style="top:25%;left:9%;--r0:-15deg;animation-duration:4.5s;animation-delay:2s;font-size:1.5rem">💖</div>
+  <div class="hsticker" style="top:82%;right:8%;--r0:12deg;animation-duration:5.2s;animation-delay:0.6s;font-size:1.7rem">🌺</div>
+  <div class="hsticker" style="top:6%;left:38%;--r0:-4deg;animation-duration:3.8s;animation-delay:1.2s;font-size:1.4rem">💫</div>
+  <div class="hsticker" style="top:88%;left:40%;--r0:6deg;animation-duration:4.8s;animation-delay:2.5s;font-size:1.5rem">🌷</div>
+  <div class="hsticker" style="top:45%;left:88%;--r0:-10deg;animation-duration:5.8s;animation-delay:0.2s;font-size:1.6rem">💕</div>
+  <div class="hsticker" style="top:60%;left:3%;--r0:14deg;animation-duration:4.3s;animation-delay:1.8s;font-size:1.4rem">⭐</div>
+
+  <div class="hsparkle" style="top:30%;left:18%;animation-duration:2.4s;animation-delay:0.4s"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 0 L10.2 7.8 L18 9 L10.2 10.2 L9 18 L7.8 10.2 L0 9 L7.8 7.8 Z" fill="rgba(201,160,80,0.7)"/></svg></div>
+  <div class="hsparkle" style="top:65%;right:15%;animation-duration:3s;animation-delay:1.3s"><svg width="14" height="14" viewBox="0 0 18 18"><path d="M9 0 L10.2 7.8 L18 9 L10.2 10.2 L9 18 L7.8 10.2 L0 9 L7.8 7.8 Z" fill="rgba(212,120,154,0.6)"/></svg></div>
+  <div class="hsparkle" style="top:20%;right:22%;animation-duration:2.8s;animation-delay:2s"><svg width="12" height="12" viewBox="0 0 18 18"><path d="M9 0 L10.2 7.8 L18 9 L10.2 10.2 L9 18 L7.8 10.2 L0 9 L7.8 7.8 Z" fill="rgba(201,160,80,0.55)"/></svg></div>
+  <div class="hsparkle" style="top:75%;left:25%;animation-duration:2.2s;animation-delay:0.8s"><svg width="10" height="10" viewBox="0 0 18 18"><path d="M9 0 L10.2 7.8 L18 9 L10.2 10.2 L9 18 L7.8 10.2 L0 9 L7.8 7.8 Z" fill="rgba(180,73,106,0.5)"/></svg></div>
+
   <div class="hero-c">
-    <p class="hero-ey">✦ Colección Exclusiva ✦</p>
+    <div class="hero-ey-new">
+      <div class="hey-line"></div>
+      Colección Exclusiva 2026
+      <div class="hey-line hey-line-r"></div>
+    </div>
     <h1 id="heroTitle">Brilla con cada detalle</h1>
-    <p id="heroSub">Bisutería fina pensada para la mujer que ama verse bella y elegante en cada momento especial.</p>
-    <div class="gdiv"><span></span><div class="dm"></div><span></span></div>
+    <p class="hero-sub-script">Bisutería · Elegancia · Arte</p>
+    <p id="heroSub">Piezas únicas pensadas para la mujer que ama verse bella y elegante en cada momento especial.</p>
+    <div class="hero-btns-new">
+      <button class="hbtn-main" onclick="document.getElementById('catPills').scrollIntoView({behavior:'smooth',block:'start'})">Ver colección</button>
+    </div>
+    <div class="hero-trust">
+      <div class="htrust-item"><div class="htrust-dot"></div>Garantía en todos nuestros productos</div>
+      <div class="htrust-item"><div class="htrust-dot"></div>Atención personalizada</div>
+    </div>
   </div>
 </section>
 
 <!-- CATEGORIES -->
 <section class="cats-sec">
-  <h2 class="sec-title">Nuestras Categorías</h2>
+  
   <div class="cat-pills" id="catPills"></div>
 </section>
 <div class="sub-pills-wrap" id="subPillsWrap">
@@ -675,7 +746,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 </div>
 
 <!-- PRODUCTS -->
-<section class="prod-sec">
+<section class="prod-sec" style="position:relative">
   <div class="prod-grid" id="prodGrid"></div>
   <div class="empty-state" id="emptyState">
     <div class="ei">🔍</div>
@@ -2093,12 +2164,67 @@ function showRelated(productId, currentCat) {
 }
 
 const originalGalleryOpen = GALLERY.open;
+
+function burstBorderExplosion(onDone) {
+  const burst = document.createElement('div');
+  burst.className = 'gallery-burst';
+  document.body.appendChild(burst);
+
+  const W = window.innerWidth, H = window.innerHeight;
+  const COLORS = ['#c9a050','#e8c97a','#d4789a','#f4a7c3','#fff','#ffd700','#ff69b4','#b5496a'];
+  const count = 60;
+
+  // Distribuir partículas por todo el borde
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'gburst-particle';
+
+    // Posición inicial en el borde
+    const side = Math.floor(Math.random() * 4);
+    let x0, y0;
+    if (side === 0) { x0 = Math.random() * W; y0 = 0; }
+    else if (side === 1) { x0 = W; y0 = Math.random() * H; }
+    else if (side === 2) { x0 = Math.random() * W; y0 = H; }
+    else { x0 = 0; y0 = Math.random() * H; }
+
+    // Dirección: hacia el centro con algo de aleatoriedad
+    const cx = W / 2 + (Math.random() - 0.5) * W * 0.6;
+    const cy = H / 2 + (Math.random() - 0.5) * H * 0.6;
+    const dist = 80 + Math.random() * 160;
+    const angle = Math.atan2(cy - y0, cx - x0);
+    const x1 = x0 + Math.cos(angle) * dist;
+    const y1 = y0 + Math.sin(angle) * dist;
+
+    const size = 4 + Math.random() * 10;
+    const dur = (0.4 + Math.random() * 0.35).toFixed(2);
+    const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+
+    p.style.cssText = `
+      left:${x0}px; top:${y0}px;
+      width:${size}px; height:${size}px;
+      background:${color};
+      box-shadow:0 0 ${size*2}px ${color};
+      --gx0:0px; --gy0:0px;
+      --gx1:${x1-x0}px; --gy1:${y1-y0}px;
+      --gd:${dur}s;
+      animation-delay:${(Math.random()*0.15).toFixed(2)}s;
+    `;
+    burst.appendChild(p);
+  }
+
+  setTimeout(() => {
+    burst.remove();
+    onDone();
+  }, 550);
+}
+
 GALLERY.open = function(product) {
-  // Cerrar zoom si está abierto
   const zm = document.getElementById('imgZoomModal');
   if(zm) { zm.classList.remove('open'); document.getElementById('imgZoomImg').src = ''; }
-  originalGalleryOpen.call(this, product);
-  showRelated(product.id, product.cat);
+  burstBorderExplosion(() => {
+    originalGalleryOpen.call(this, product);
+    showRelated(product.id, product.cat);
+  });
 };
 
 // ═══════════════════════════════════════════════════
@@ -3705,6 +3831,115 @@ window.addEventListener('scroll', () => {
     }
   });
 })();
+// ═══════════════════════════════════════════════════
+// CHISPITAS AL CLICK DE PRODUCTO
+// ═══════════════════════════════════════════════════
+(function() {
+  const SPARKS = ['✨','⭐','💖','🌟','💫','💕','🌸','💎','⚡'];
+  const COLORS = ['#c9a050','#e8c97a','#d4789a','#f4a7c3','#fff','#ffd700','#ff69b4'];
+
+  function spawnSparks(x, y) {
+    const count = 10 + Math.floor(Math.random() * 6);
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement('span');
+      el.className = 'spark';
+      const angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.8;
+      const dist = 50 + Math.random() * 80;
+      const sx = Math.cos(angle) * dist;
+      const sy = Math.sin(angle) * dist - Math.random() * 40;
+      const dur = (0.5 + Math.random() * 0.5).toFixed(2);
+      const rot = (Math.random() - 0.5) * 360;
+      const emoji = Math.random() > 0.45 ? SPARKS[Math.floor(Math.random() * SPARKS.length)] : '✦';
+
+      el.textContent = emoji;
+      el.style.cssText = `
+        left:${x}px; top:${y}px;
+        --sx:${sx}px; --sy:${sy}px;
+        --sd:${dur}s; --sr:${rot}deg;
+        color:${COLORS[Math.floor(Math.random() * COLORS.length)]};
+        font-size:${0.8 + Math.random() * 0.9}rem;
+        margin-left:-8px; margin-top:-8px;
+      `;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), dur * 1000 + 100);
+    }
+  }
+
+  document.addEventListener('click', e => {
+    spawnSparks(e.clientX, e.clientY);
+  });
+  document.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    if (t) spawnSparks(t.clientX, t.clientY);
+  }, {passive: true});
+})();
+
+// ═══════════════════════════════════════════════════
+// EMOJIS FLOTANTES DE FONDO
+// ═══════════════════════════════════════════════════
+(function() {
+  const EMOJIS = ['😍','💅','🤩','⭐','💖','💕','🌟','🌸','✨','💫'];
+  const container = document.querySelector('.bg-emojis');
+  if (!container) return;
+
+  function createEmoji() {
+    const el = document.createElement('span');
+    el.className = 'bge';
+    el.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+
+    const size = Math.random() * 1.2 + 1.0; // 1.0 - 2.2rem
+    const startX = Math.random() * 100; // % horizontal
+    const duration = Math.random() * 12 + 10; // 10-22s
+    const delay = Math.random() * duration; // start at random point
+    const drift = (Math.random() - 0.5) * 120; // deriva horizontal px
+    const rotStart = (Math.random() - 0.5) * 30;
+    const rotEnd = rotStart + (Math.random() - 0.5) * 40;
+    const opacity = Math.random() * 0.055 + 0.03; // 0.03 - 0.085
+
+    el.style.cssText = `
+      font-size:${size}rem;
+      left:${startX}%;
+      bottom:-80px;
+      opacity:0;
+    `;
+
+    container.appendChild(el);
+
+    const startTime = performance.now() - delay * 1000;
+
+    function animate(now) {
+      const elapsed = (now - startTime) / 1000;
+      const cycle = elapsed % duration;
+      const progress = cycle / duration; // 0→1
+
+      if (progress < 0.05) {
+        el.style.opacity = (progress / 0.05) * opacity;
+      } else if (progress > 0.85) {
+        el.style.opacity = ((1 - progress) / 0.15) * opacity;
+      } else {
+        el.style.opacity = opacity;
+      }
+
+      const y = -(progress * (window.innerHeight + 120));
+      const x = drift * Math.sin(progress * Math.PI * 2);
+      const rot = rotStart + (rotEnd - rotStart) * progress;
+      const scale = 0.8 + Math.sin(progress * Math.PI) * 0.3;
+
+      el.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg) scale(${scale})`;
+
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  // Crear emojis escalonados
+  const total = 28;
+  for (let i = 0; i < total; i++) {
+    setTimeout(() => createEmoji(), i * 600);
+  }
+})();
+
 </script>
 </body>
 </html>
