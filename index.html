@@ -1420,35 +1420,29 @@ const SB = {
 };
 
 // ═══════════════════════════════════════════════════
-// STORE (híbrido: Supabase como fuente de verdad, localStorage como caché)
+// STORE (Supabase es la única fuente de verdad)
 // ═══════════════════════════════════════════════════
+const _mem = {}; // memoria en RAM, se llena al arrancar desde Supabase
+
 const store = {
   get(k, def=null) {
-    try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; }
-    catch { return def; }
+    return _mem[k] !== undefined ? _mem[k] : def;
   },
   set(k, v) {
-    try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) { console.warn("localStorage error", e); }
-    SB.set(k, v).catch(err => { console.warn("Supabase save error:", err); });
+    _mem[k] = v; // actualizar en RAM inmediatamente
+    SB.set(k, v).catch(err => { console.error("Supabase save error:", k, err); });
   },
-  merge(k, obj) { this.set(k, {...this.get(k,{}), ...obj}); },
+  merge(k, obj) { this.set(k, {...this.get(k, {}), ...obj}); },
   async loadFromCloud(k, def=null) {
     try {
       const v = await SB.get(k);
       if (v !== null) {
-        localStorage.setItem(k, JSON.stringify(v));
+        _mem[k] = v;
         return v;
       }
-      // Supabase no tiene esta clave aún — revisar localStorage antes de retornar null
-      const local = this.get(k);
-      return local; // puede ser null si realmente es primera vez
-    } catch {
-      // Error de red — usar localStorage como respaldo, nunca defaults
-      const local = this.get(k);
-      if (local !== null) {
-        console.warn('Supabase no disponible, usando caché local para', k);
-        return local;
-      }
+      return null; // clave no existe en Supabase todavía
+    } catch(e) {
+      console.error('Error cargando desde Supabase:', k, e);
       return null;
     }
   }
@@ -3675,24 +3669,23 @@ window.addEventListener('scroll', () => {
   // Mostrar skeleton mientras carga Supabase
   showSkeleton();
 
-  // ── Cargar datos desde Supabase (fuente de verdad) ──
-  const [cloudProds, cloudCats, cloudBanners, cloudStickers, cloudFaq, cloudApp] = await Promise.all([
-    store.loadFromCloud(PROD_K, null),
-    store.loadFromCloud(CAT_K, null),
-    store.loadFromCloud(BANNER_K, null),
-    store.loadFromCloud(STICKER_K, null),
-    store.loadFromCloud(FAQ_K, null),
-    store.loadFromCloud(APP_K, null)
+  // ── Cargar TODO desde Supabase ──
+  await Promise.all([
+    store.loadFromCloud(PROD_K),
+    store.loadFromCloud(CAT_K),
+    store.loadFromCloud(BANNER_K),
+    store.loadFromCloud(STICKER_K),
+    store.loadFromCloud(FAQ_K),
+    store.loadFromCloud(APP_K),
+    store.loadFromCloud(REV_K)
   ]);
 
-  // Inicializar defaults SOLO si es primera vez real (nada en Supabase NI en localStorage)
-  const localProds = store.get(PROD_K);
-  const localCats = store.get(CAT_K);
-  if (cloudProds === null && localProds === null) { console.log("Primera vez: inicializando productos"); store.set(PROD_K, DEF_PRODS); }
-  if (cloudCats === null && localCats === null) { console.log("Primera vez: inicializando categorías"); store.set(CAT_K, DEF_CATS); }
-  if (cloudBanners === null && store.get(BANNER_K) === null) store.set(BANNER_K, DEF_BANNERS);
-  if (cloudStickers === null && store.get(STICKER_K) === null) store.set(STICKER_K, DEF_STICKERS);
-  if (cloudFaq === null && store.get(FAQ_K) === null) store.set(FAQ_K, DEF_FAQ);
+  // Solo inicializar con defaults si Supabase no tiene nada (primera vez real)
+  if (store.get(PROD_K) === null) store.set(PROD_K, DEF_PRODS);
+  if (store.get(CAT_K) === null) store.set(CAT_K, DEF_CATS);
+  if (store.get(BANNER_K) === null) store.set(BANNER_K, DEF_BANNERS);
+  if (store.get(STICKER_K) === null) store.set(STICKER_K, DEF_STICKERS);
+  if (store.get(FAQ_K) === null) store.set(FAQ_K, DEF_FAQ);
 
   applyApp();
   renderTicker();
@@ -3702,7 +3695,6 @@ window.addEventListener('scroll', () => {
   renderSubPills();
   renderAll();
   CART.updateCount();
-  setTimeout(() => AUTO_BACKUP.init(), 3000); // después de que Supabase ya cargó
   
   const a = getApp();
   const waNum = a.waNum || WA_NUM;
