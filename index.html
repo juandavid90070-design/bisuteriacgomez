@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{overflow-x:hidden;max-width:100%}
+html,body{overflow-x:hidden;max-width:100%;padding-top:var(--hh)}
 img{display:block;max-width:100%}
 :root{
   --rd:#b5496a;--rm:#d4789a;--rb:#fce8ef;--rc:#fff5f8;
@@ -48,7 +48,7 @@ body::after{content:'';position:fixed;bottom:-100px;left:-100px;width:320px;heig
 .float-sticker{position:fixed;z-index:90;pointer-events:none;font-family:'Great Vibes',cursive;font-size:clamp(.9rem,2.5vw,1.4rem);color:var(--g);text-shadow:0 2px 8px rgba(201,160,80,.3);opacity:.75;transition:opacity .3s;padding:6px 14px;border-radius:20px;border:1px solid rgba(201,160,80,.25);background:rgba(255,245,248,.85);backdrop-filter:blur(4px)}
 
 /* ── HEADER ───────────────────────────────── */
-header{position:sticky;top:0;z-index:200;background:rgba(255,245,248,.97);backdrop-filter:blur(14px);border-bottom:1px solid rgba(201,160,80,.22);box-shadow:0 2px 18px rgba(180,73,106,.08)}
+header{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,245,248,.97);backdrop-filter:blur(14px);border-bottom:1px solid rgba(201,160,80,.22);box-shadow:0 2px 18px rgba(180,73,106,.08)}
 .hrow{max-width:var(--mw);margin:0 auto;padding:0 var(--px);display:flex;align-items:center;gap:14px;height:var(--hh)}
 .logo{text-decoration:none;flex-shrink:0;line-height:1}
 .logo-main{font-family:'Great Vibes',cursive;font-size:clamp(1.45rem,4.5vw,2.1rem);color:var(--g);text-shadow:0 1px 8px rgba(201,160,80,.25)}
@@ -3869,6 +3869,18 @@ window.addEventListener('scroll', () => {
   renderAll();
   CART.updateCount();
   
+  // ── Deep link: abrir producto compartido ──
+  const _urlParams = new URLSearchParams(location.search);
+  const _sharedPid = _urlParams.get('p');
+  if (_sharedPid) {
+    const _sharedProd = getProds().find(p => p.id === _sharedPid);
+    if (_sharedProd) {
+      setTimeout(() => {
+        GALLERY.open(_sharedProd);
+      }, 600);
+    }
+  }
+
   const a = getApp();
   const waNum = a.waNum || WA_NUM;
   ['hdrWa','ftWa','fabWa','faqWa'].forEach(id => {
