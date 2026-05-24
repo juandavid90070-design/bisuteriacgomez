@@ -683,6 +683,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <div class="hero-blob hero-blob-1"></div>
   <div class="hero-blob hero-blob-2"></div>
   <div class="hero-blob hero-blob-3"></div>
+  <div class="hero-bg" id="heroBg" style="position:absolute;inset:0;background-size:cover;background-position:center;opacity:0.25;z-index:1"></div>
   <div class="hero-dots"></div>
 
   <div class="hsticker" style="top:8%;left:4%;--r0:-12deg;animation-duration:4.2s;animation-delay:0s;font-size:2.2rem">🍓</div>
@@ -1698,8 +1699,10 @@ function applyApp() {
   if(a.scheme) applyScheme(a.scheme);
   if(a.cover) {
     const bg = document.getElementById('heroBg');
-    bg.style.backgroundImage = `url('${a.cover}')`;
-    bg.style.opacity = (a.coverOp || 25) / 100;
+    if(bg) {
+      bg.style.backgroundImage = `url('${a.cover}')`;
+      bg.style.opacity = (a.coverOp || 25) / 100;
+    }
   }
   const waNum = a.waNum || WA_NUM;
   const gl = `https://wa.me/${waNum}?text=${encodeURIComponent(WA_MESSAGES.catalog())}`;
@@ -3240,7 +3243,7 @@ document.getElementById('clearCover').addEventListener('click', () => {
     delete a.cover;
     store.set(APP_K, a);
     document.getElementById('coverPreview').style.display = 'none';
-    document.getElementById('heroBg').style.backgroundImage = '';
+    const _hbg = document.getElementById('heroBg'); if(_hbg) _hbg.style.backgroundImage = '';
     toast('✅ Portada eliminada');
   } catch(e) {
     toast(e.message, true);
