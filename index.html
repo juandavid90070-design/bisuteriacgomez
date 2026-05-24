@@ -172,8 +172,15 @@ header{position:sticky;top:0;z-index:200;background:rgba(255,245,248,.97);backdr
 .wa-btn:hover{background:linear-gradient(135deg,#8b2f4e,var(--rd));transform:translateY(-1px)}
 .wa-btn svg{width:14px;height:14px;flex-shrink:0}
 .rev-btn{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;padding:7px 0;border-radius:var(--rbtn);background:transparent;border:1.5px solid rgba(201,160,80,.35);color:var(--g);font-family:'Cormorant Garamond',serif;font-size:clamp(.74rem,1.9vw,.88rem);font-weight:600;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.card-btns-row2{display:flex;gap:6px}
+.card-btns-row2 .rev-btn{font-size:clamp(.62rem,1.5vw,.74rem);flex:1}
+.share-btn{display:flex;align-items:center;justify-content:center;gap:5px;flex:1;padding:7px 0;border-radius:var(--rbtn);background:transparent;border:1.5px solid rgba(181,73,106,.25);color:#b5496a;font-family:'Cormorant Garamond',serif;font-size:clamp(.62rem,1.5vw,.78rem);font-weight:600;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.share-btn:hover{background:rgba(181,73,106,.08);border-color:#b5496a}
 .rev-btn:hover{background:rgba(201,160,80,.08);border-color:var(--g)}
 .empty-state{text-align:center;padding:56px 24px;display:none}
+.ver-mas-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin:28px auto 0;padding:13px 36px;background:linear-gradient(135deg,#b5496a,#d4789a);color:#fff;font-family:'Lato',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:50px;cursor:pointer;box-shadow:0 4px 16px rgba(181,73,106,.25);transition:all .3s ease}
+.ver-mas-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(181,73,106,.35)}
+.ver-mas-btn span{font-weight:400;opacity:.8;font-size:.75rem}
 .empty-state .ei{font-size:2.8rem;margin-bottom:14px;opacity:.5}
 .empty-state p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:var(--rm);line-height:1.6}
 
@@ -1998,7 +2005,10 @@ function renderCard(p) {
           ${CART_SVG} Agregar
         </button>
         <button class="wa-btn" data-pid="${p.id}" data-pname="${sanitize(p.name)}">💬 Pedir por WhatsApp</button>
-        <button class="rev-btn" data-pid="${p.id}" data-pname="${sanitize(p.name)}">⭐ Reseñas (${revs})</button>
+        <div class="card-btns-row2">
+          <button class="rev-btn" data-pid="${p.id}" data-pname="${sanitize(p.name)}">⭐ Reseñas (${revs})</button>
+          <button class="share-btn" data-pid="${p.id}" data-pname="${sanitize(p.name)}" data-price="${p.price}">🔗 Compartir</button>
+        </div>
       </div>
     </div>
   </div>`;
@@ -2088,14 +2098,36 @@ function showSkeleton() {
   grid.innerHTML = `<div class="skeleton-grid">${Array.from({length:4}, () => card).join('')}</div>`;
 }
 
-function renderAll() {
+let _visibleCount = 8;
+const PAGE_SIZE = 8;
+
+function renderAll(resetPage = true) {
+  if (resetPage) _visibleCount = PAGE_SIZE;
   const f = getFiltered();
   const grid = document.getElementById('prodGrid');
   const empty = document.getElementById('emptyState');
   const cnt = document.getElementById('rcnt');
-  grid.innerHTML = f.map(renderCard).join('');
+  const visible = f.slice(0, _visibleCount);
+  grid.innerHTML = visible.map(renderCard).join('');
   empty.style.display = f.length === 0 ? 'block' : 'none';
-  cnt.textContent = f.length ? `Mostrando ${f.length} producto${f.length!==1?'s':''}` : 'Sin resultados';
+  cnt.textContent = f.length ? `Mostrando ${visible.length} de ${f.length} producto${f.length!==1?'s':''}` : 'Sin resultados';
+
+  // Botón "Ver más"
+  const existing = document.getElementById('verMasBtn');
+  if (existing) existing.remove();
+  if (_visibleCount < f.length) {
+    const btn = document.createElement('button');
+    btn.id = 'verMasBtn';
+    btn.className = 'ver-mas-btn';
+    btn.innerHTML = `Ver más <span>(${f.length - _visibleCount} restantes)</span>`;
+    btn.addEventListener('click', () => {
+      _visibleCount += PAGE_SIZE;
+      renderAll(false);
+      btn.remove();
+    });
+    grid.insertAdjacentElement('afterend', btn);
+  }
+
   initSlideshows();
   
   // Cart buttons
@@ -2120,6 +2152,18 @@ function renderAll() {
   // Review buttons
   grid.querySelectorAll('.rev-btn').forEach(b => b.addEventListener('click', () => {
     openRevModal(b.dataset.pid, b.dataset.pname);
+  }));
+
+  // Share buttons
+  grid.querySelectorAll('.share-btn').forEach(b => b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const url = `${location.origin}${location.pathname}?p=${b.dataset.pid}`;
+    const text = `✨ ${b.dataset.pname} — COP ${parseInt(b.dataset.price).toLocaleString('es-CO')}\nVer en: ${url}`;
+    if (navigator.share) {
+      navigator.share({ title: b.dataset.pname, text, url }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(url).then(() => toast('🔗 Link copiado')).catch(() => prompt('Copia el link:', url));
+    }
   }));
 
 
