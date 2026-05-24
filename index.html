@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{overflow-x:hidden;max-width:100%;padding-top:var(--hh)}
+html,body{overflow-x:hidden;max-width:100%}
 img{display:block;max-width:100%}
 :root{
   --rd:#b5496a;--rm:#d4789a;--rb:#fce8ef;--rc:#fff5f8;
@@ -38,7 +38,7 @@ body::before{content:'';position:fixed;top:-120px;right:-120px;width:400px;heigh
 body::after{content:'';position:fixed;bottom:-100px;left:-100px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(201,160,80,.07),transparent 70%);pointer-events:none;z-index:0}
 
 /* ── TOP BANNER TICKER ─────────────────────── */
-.top-ticker{position:relative;overflow:hidden;background:linear-gradient(90deg,var(--rd),#8b2f4e,var(--rd));height:36px;display:flex;align-items:center}
+.top-ticker{margin-top:var(--hh);position:relative;overflow:hidden;background:linear-gradient(90deg,var(--rd),#8b2f4e,var(--rd));height:36px;display:flex;align-items:center}
 .ticker-track{display:flex;align-items:center;white-space:nowrap;animation:ticker 22s linear infinite}
 .ticker-track:hover{animation-play-state:paused}
 .ticker-item{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(.7rem,2vw,.88rem);color:var(--gl);letter-spacing:.07em;padding:0 48px}
@@ -58,6 +58,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,245,2
 .swrap input::placeholder{color:#c0a0b0}
 .swrap input:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(201,160,80,.12)}
 .si{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;fill:none;stroke:var(--g);stroke-width:2;pointer-events:none}
+.search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(181,73,106,.12);border:none;color:#b5496a;font-size:.72rem;font-weight:700;width:20px;height:20px;border-radius:50%;cursor:pointer;line-height:1;transition:background .2s;z-index:2}
+.search-clear:hover{background:rgba(181,73,106,.28)}
 .hacts{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .ibtn{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:transparent;border:none;cursor:pointer;color:var(--rd);transition:background .2s}
 .ibtn:hover{background:var(--rb)}
@@ -652,6 +654,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
     <div class="swrap" style="position:relative">
       <input type="text" id="sdeskTop" placeholder="Buscar aretes, collares, pulseras…" autocomplete="off"/>
       <svg class="si" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+      <button class="search-clear" id="searchClearDesk" style="display:none" aria-label="Limpiar búsqueda">✕</button>
       <div class="search-suggestions" id="searchSuggestions"></div>
     </div>
     <div class="hacts">
@@ -678,6 +681,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   </div>
   <div class="mob-sb" id="mobSb" style="position:relative">
     <input type="text" id="smob" placeholder="¿Qué estás buscando?" autocomplete="off"/>
+    <button class="search-clear" id="searchClearMob" style="display:none" aria-label="Limpiar búsqueda">✕</button>
     <div class="search-suggestions" id="searchSuggestionsMob"></div>
   </div>
 </header>
@@ -3779,12 +3783,28 @@ function showSuggestions(query) {
 document.getElementById('sdeskTop').addEventListener('input', e => {
   handleSearch(e.target.value);
   showSuggestions(e.target.value);
+  const clr = document.getElementById('searchClearDesk');
+  if(clr) clr.style.display = e.target.value ? 'flex' : 'none';
+  const si = document.querySelector('.swrap .si');
+  if(si) si.style.display = e.target.value ? 'none' : '';
 });
 document.getElementById('sdeskTop').addEventListener('blur', () => {
   setTimeout(() => suggestionsEl && suggestionsEl.classList.remove('open'), 200);
 });
+document.getElementById('searchClearDesk').addEventListener('click', () => {
+  const inp = document.getElementById('sdeskTop');
+  inp.value = '';
+  handleSearch('');
+  suggestionsEl && suggestionsEl.classList.remove('open');
+  document.getElementById('searchClearDesk').style.display = 'none';
+  const si = document.querySelector('.swrap .si');
+  if(si) si.style.display = '';
+  inp.focus();
+});
 document.getElementById('smob').addEventListener('input', e => {
   handleSearch(e.target.value);
+  const clrM = document.getElementById('searchClearMob');
+  if(clrM) clrM.style.display = e.target.value ? 'flex' : 'none';
   // sugerencias móvil
   const mobSugg = document.getElementById('searchSuggestionsMob');
   const query = e.target.value;
@@ -3814,6 +3834,15 @@ document.getElementById('smob').addEventListener('input', e => {
 });
 document.getElementById('smob').addEventListener('blur', () => {
   setTimeout(() => { const m = document.getElementById('searchSuggestionsMob'); if(m) m.classList.remove('open'); }, 200);
+});
+document.getElementById('searchClearMob').addEventListener('click', () => {
+  const inp = document.getElementById('smob');
+  inp.value = '';
+  handleSearch('');
+  const m = document.getElementById('searchSuggestionsMob');
+  if(m) m.classList.remove('open');
+  document.getElementById('searchClearMob').style.display = 'none';
+  inp.focus();
 });
 document.getElementById('sortSel').addEventListener('change', e => {
   curSort = e.target.value;
