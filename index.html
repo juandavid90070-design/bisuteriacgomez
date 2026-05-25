@@ -1512,10 +1512,27 @@ const store = {
     return _mem[k] !== undefined ? _mem[k] : def;
   },
   set(k, v) {
-    _mem[k] = v; // actualizar en RAM inmediatamente
-    SB.set(k, v).catch(err => { console.error("Supabase save error:", k, err); });
+    _mem[k] = v;
+    // Guardar en Supabase de forma segura: si falla, no silenciamos el error
+    SB.set(k, v).then(async () => {
+      // Releer desde Supabase para asegurarnos de tener la versión más reciente
+      try {
+        const fresh = await SB.get(k);
+        if (fresh !== null) _mem[k] = fresh;
+      } catch(e) { /* silenciar error de lectura post-guardado */ }
+    }).catch(err => { console.error("Supabase save error:", k, err); });
   },
-  merge(k, obj) { this.set(k, {...this.get(k, {}), ...obj}); },
+  merge(k, obj) {
+    // Siempre leer la versión más fresca antes de mezclar, para no pisar cambios de otros
+    SB.get(k).then(fresh => {
+      const base = fresh !== null ? fresh : (this.get(k, {}) || {});
+      const merged = {...base, ...obj};
+      this.set(k, merged);
+    }).catch(() => {
+      // Si falla la lectura, mezclar sobre lo que hay en memoria
+      this.set(k, {...this.get(k, {}), ...obj});
+    });
+  },
   async loadFromCloud(k, def=null) {
     try {
       const v = await SB.get(k);
@@ -1536,8 +1553,13 @@ const store = {
 // ═══════════════════════════════════════════════════
 const CART = {
   K: 'bcg_cart',
-  get() { return store.get(this.K, []); },
-  save(items) { store.set(this.K, items); this.updateCount(); },
+  get() {
+    try { return JSON.parse(localStorage.getItem(this.K)) || []; } catch { return []; }
+  },
+  save(items) {
+    try { localStorage.setItem(this.K, JSON.stringify(items)); } catch {}
+    this.updateCount();
+  },
   add(product, qty = 1) {
     const items = this.get();
     const existing = items.find(i => i.id === product.id);
@@ -3882,12 +3904,23 @@ window.addEventListener('scroll', () => {
     store.loadFromCloud(REV_K)
   ]);
 
-  // Solo inicializar con defaults si Supabase no tiene nada (primera vez real)
-  if (store.get(PROD_K) === null) store.set(PROD_K, DEF_PRODS);
-  if (store.get(CAT_K) === null) store.set(CAT_K, DEF_CATS);
-  if (store.get(BANNER_K) === null) store.set(BANNER_K, DEF_BANNERS);
-  if (store.get(STICKER_K) === null) store.set(STICKER_K, DEF_STICKERS);
-  if (store.get(FAQ_K) === null) store.set(FAQ_K, DEF_FAQ);
+  // Solo inicializar con defaults en MEMORIA si Supabase no tiene nada
+  // NUNCA escribir defaults a Supabase para no borrar datos reales de otros usuarios
+  if (!store.get(PROD_K) || !Array.isArray(store.get(PROD_K)) || store.get(PROD_K).length === 0) {
+    _mem[PROD_K] = DEF_PRODS;
+  }
+  if (!store.get(CAT_K) || !Array.isArray(store.get(CAT_K)) || store.get(CAT_K).length === 0) {
+    _mem[CAT_K] = DEF_CATS;
+  }
+  if (!store.get(BANNER_K) || !Array.isArray(store.get(BANNER_K)) || store.get(BANNER_K).length === 0) {
+    _mem[BANNER_K] = DEF_BANNERS;
+  }
+  if (!store.get(STICKER_K) || !Array.isArray(store.get(STICKER_K))) {
+    _mem[STICKER_K] = DEF_STICKERS;
+  }
+  if (!store.get(FAQ_K) || !Array.isArray(store.get(FAQ_K))) {
+    _mem[FAQ_K] = DEF_FAQ;
+  }
 
   applyApp();
   renderTicker();
