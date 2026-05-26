@@ -327,11 +327,6 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 .admin-trig svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2}
 
 /* ── FAB ──────────────────────────────────── */
-.fab-wa{position:fixed;bottom:20px;right:16px;z-index:300;display:none;align-items:center;gap:8px;background:#25d366;color:#fff;border-radius:var(--rbtn);padding:12px 18px;font-family:'Lato',sans-serif;font-weight:700;font-size:.85rem;text-decoration:none;box-shadow:0 6px 24px rgba(37,211,102,.4);transition:transform .2s}
-.fab-wa:hover{transform:scale(1.05)}
-.fab-wa svg{width:20px;height:20px;fill:currentColor;flex-shrink:0}
-.scroll-top{position:fixed;bottom:26px;right:22px;z-index:250;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--rd),#8b2f4e);color:var(--gl);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 4px 16px rgba(180,73,106,.32);opacity:0;transform:translateY(12px);transition:all .3s;pointer-events:none}
-.scroll-top.visible{opacity:1;transform:translateY(0);pointer-events:all}
 
 /* ══════════════════════════════════════════
    ADMIN PANEL
@@ -549,8 +544,6 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   .cat-pills::-webkit-scrollbar{display:none}
   .cat-pill{scroll-snap-align:start}
   .frow{flex-direction:column;align-items:flex-start;gap:8px}
-  .fab-wa{display:flex}
-  .scroll-top{bottom:76px;right:14px}
   .faq-fab{bottom:100px}
 }
 @media(min-width:480px) and (max-width:767px){
@@ -563,8 +556,6 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   .cat-pills::-webkit-scrollbar{display:none}
   .prod-grid{grid-template-columns:repeat(2,1fr)}
   .frow{flex-direction:column;align-items:flex-start;gap:8px}
-  .fab-wa{display:flex}
-  .scroll-top{bottom:76px}
   .faq-fab{bottom:100px}
 }
 @media(min-width:768px) and (max-width:1023px){
@@ -798,11 +789,6 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   </button>
 </footer>
 
-<a href="#" id="fabWa" class="fab-wa">
-  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2.003C6.485 2.003 2 6.486 2 12.004a9.958 9.958 0 001.47 5.223L2.008 22l4.905-1.444A9.959 9.959 0 0012.004 22C17.522 22 22 17.518 22 12.004S17.522 2.003 12.004 2.003zm0 18.185a8.17 8.17 0 01-4.17-1.143l-.299-.178-3.092.91.927-3.005-.194-.307A8.192 8.192 0 013.82 12.004c0-4.513 3.672-8.183 8.184-8.183 4.51 0 8.183 3.67 8.183 8.183 0 4.51-3.673 8.184-8.183 8.184z"/></svg>
-  Escríbenos
-</a>
-<button class="scroll-top" id="stBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Arriba">↑</button>
 
 <!-- FAQ FLOATING BUTTON -->
 <button class="faq-fab" id="faqFab">
@@ -1433,36 +1419,38 @@ const VALIDATOR = {
 };
 
 // ═══════════════════════════════════════════════════
-// AUTO BACKUP (copia local diaria en localStorage)
+// AUTO BACKUP
 // ═══════════════════════════════════════════════════
 const AUTO_BACKUP = {
   init() {
     const last = localStorage.getItem('bcg_last_backup');
-    if(!last || Date.now() - parseInt(last) > 24 * 60 * 60 * 1000) this.create();
+    const now = Date.now();
+    if(!last || now - parseInt(last) > 24 * 60 * 60 * 1000) {
+      this.create();
+    }
   },
   async create() {
-    try {
-      const [products, categories, revRows, faq, banners, stickers, settings] = await Promise.all([
-        DB.getProducts(), DB.getCategories(), DB.getReviews(),
-        DB.getFAQ(), DB.getBanners(), DB.getStickers(), DB.getAllSettings()
-      ]);
-      const data = { products, categories, reviews: revRows, faq, banners, stickers,
-        appearance: settings['appearance']||{}, timestamp: new Date().toISOString() };
-      localStorage.setItem('bcg_auto_backup', JSON.stringify(data));
-      localStorage.setItem('bcg_last_backup', Date.now().toString());
-    } catch(e) { console.warn('Auto-backup falló:', e); }
+    const [products, categories, reviews, faq, appearance] = await Promise.all([
+      store.loadFromCloud(PROD_K, getProds()),
+      store.loadFromCloud(CAT_K, getCats()),
+      store.loadFromCloud(REV_K, getRevs()),
+      store.loadFromCloud(FAQ_K, getFAQ()),
+      store.loadFromCloud(APP_K, getApp())
+    ]);
+    const data = { products, categories, reviews, faq, appearance, timestamp: new Date().toISOString() };
+    localStorage.setItem('bcg_auto_backup', JSON.stringify(data));
+    localStorage.setItem('bcg_last_backup', Date.now().toString());
   },
   async restore() {
     const backup = localStorage.getItem('bcg_auto_backup');
-    if(backup && confirm('¿Restaurar backup automático local?')) {
+    if(backup && confirm('¿Restaurar backup automático?')) {
       const data = JSON.parse(backup);
       const writes = [];
-      if(data.products)   writes.push(...data.products.map(p => DB.upsertProduct(p)));
-      if(data.categories) writes.push(...data.categories.map((c,i) => DB.upsertCategory(c,i)));
-      if(data.faq)        writes.push(...data.faq.map((f,i) => DB.upsertFAQ(f,i)));
-      if(data.banners)    writes.push(...data.banners.map((b,i) => DB.upsertBanner(b,i)));
-      if(data.stickers)   writes.push(...data.stickers.map(s => DB.upsertSticker(s)));
-      if(data.appearance) writes.push(DB.setSetting('appearance', data.appearance));
+      if(data.products) writes.push(SB.set(PROD_K, data.products));
+      if(data.categories) writes.push(SB.set(CAT_K, data.categories));
+      if(data.reviews) writes.push(SB.set(REV_K, data.reviews));
+      if(data.faq) writes.push(SB.set(FAQ_K, data.faq));
+      if(data.appearance) writes.push(SB.set(APP_K, data.appearance));
       await Promise.all(writes);
       location.reload();
     }
@@ -1475,229 +1463,56 @@ const AUTO_BACKUP = {
 const SB_URL = 'https://mbxqxyuogxzujyaqnncw.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ieHF4eXVvZ3h6dWp5YXFubmN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NDg0NzAsImV4cCI6MjA5NDUyNDQ3MH0.eXviIBqkvmDje6hxVEONtGPeUq5vQLbzlhwaxqzAOKQ';
 
-// ═══════════════════════════════════════════════════
-// DB — capa de acceso a tablas reales de Supabase
-// Cada tabla tiene sus propios métodos: sin arrays completos
-// ═══════════════════════════════════════════════════
-const DB = {
-  _h: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
-
-  async _req(method, table, body, params='') {
-    const res = await fetch(`${SB_URL}/rest/v1/${table}${params}`, {
-      method, headers: { ...this._h, ...(method==='POST'||method==='PATCH'?{'Prefer':'resolution=merge-duplicates,return=representation'}:{}) },
-      body: body ? JSON.stringify(body) : undefined
+const SB = {
+  async get(key) {
+    const res = await fetch(`${SB_URL}/rest/v1/store?key=eq.${encodeURIComponent(key)}&select=value`, {
+      headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
     });
-    if (!res.ok) {
-      const err = await res.text().catch(()=>'');
-      console.error(`DB.${method} ${table}:`, res.status, err);
-      throw new Error(`Error ${res.status} en ${table}: ${err}`);
-    }
-    return res.status === 204 ? [] : res.json().catch(()=>[]);
-  },
-
-  // ── PRODUCTOS ───────────────────────────────────
-  async getProducts() {
-    return this._req('GET','products','','?order=created_at.asc');
-  },
-  async upsertProduct(p) {
-    return this._req('POST','products',{
-      id: p.id, name: p.name, cat: p.cat, sub: p.sub||'',
-      price: p.price, description: p.desc||'', emoji: p.emoji||'💎',
-      image: p.image||'', images: p.images||[], badge: p.badge||'', video: p.video||''
-    });
-  },
-  async deleteProduct(id) {
-    return this._req('DELETE','products','',`?id=eq.${encodeURIComponent(id)}`);
-  },
-
-  // ── CATEGORÍAS ──────────────────────────────────
-  async getCategories() {
-    return this._req('GET','categories','','?order=sort_order.asc');
-  },
-  async upsertCategory(c, order) {
-    return this._req('POST','categories',{
-      id: c.id, name: c.name, emoji: c.emoji||'📎', subs: c.subs||[], sort_order: order||0
-    });
-  },
-  async deleteCategory(id) {
-    return this._req('DELETE','categories','',`?id=eq.${encodeURIComponent(id)}`);
-  },
-  async reorderCategories(cats) {
-    // Actualizar sort_order de todas en paralelo
-    return Promise.all(cats.map((c,i) =>
-      this._req('PATCH','categories',{sort_order:i},`?id=eq.${encodeURIComponent(c.id)}`)
-    ));
-  },
-
-  // ── RESEÑAS ────────────────────────────────────
-  async getReviews() {
-    return this._req('GET','reviews','','?order=created_at.asc');
-  },
-  async insertReview(r) {
-    return this._req('POST','reviews',{
-      id: r.id, product_id: r.pid, author: r.author, rating: r.rating, body: r.text||r.body||''
-    });
-  },
-  async deleteReview(id) {
-    return this._req('DELETE','reviews','',`?id=eq.${encodeURIComponent(id)}`);
-  },
-
-  // ── FAQ ────────────────────────────────────────
-  async getFAQ() {
-    return this._req('GET','faq','','?order=sort_order.asc');
-  },
-  async upsertFAQ(f, order) {
-    return this._req('POST','faq',{
-      id: f.id, question: f.q||f.question, answer: f.a||f.answer, emoji: f.emoji||'❓', sort_order: order||0
-    });
-  },
-  async deleteFAQ(id) {
-    return this._req('DELETE','faq','',`?id=eq.${encodeURIComponent(id)}`);
-  },
-  async reorderFAQ(faqs) {
-    return Promise.all(faqs.map((f,i) =>
-      this._req('PATCH','faq',{sort_order:i},`?id=eq.${encodeURIComponent(f.id)}`)
-    ));
-  },
-
-  // ── BANNERS ────────────────────────────────────
-  async getBanners() {
-    return this._req('GET','banners','','?order=sort_order.asc');
-  },
-  async upsertBanner(b, order) {
-    return this._req('POST','banners',{
-      id: b.id, text: b.text, color: b.color||'#e8c97a', active: b.on!==false, sort_order: order||0
-    });
-  },
-  async deleteBanner(id) {
-    return this._req('DELETE','banners','',`?id=eq.${encodeURIComponent(id)}`);
-  },
-
-  // ── STICKERS ───────────────────────────────────
-  async getStickers() {
-    return this._req('GET','stickers','','');
-  },
-  async upsertSticker(s) {
-    return this._req('POST','stickers',{
-      id: s.id, text: s.text, position: s.pos||s.position||'top-left', visible: s.visible!==false
-    });
-  },
-  async deleteSticker(id) {
-    return this._req('DELETE','stickers','',`?id=eq.${encodeURIComponent(id)}`);
-  },
-
-  // ── APP SETTINGS ───────────────────────────────
-  async getSetting(key) {
-    const rows = await this._req('GET','app_settings','',`?key=eq.${encodeURIComponent(key)}&select=value`);
+    if (!res.ok) { console.error('SB.get error:', res.status, res.statusText, key); return null; }
+    const rows = await res.json();
     return rows.length ? rows[0].value : null;
   },
-  async setSetting(key, value) {
-    return this._req('POST','app_settings',{ key, value, updated_at: new Date().toISOString() });
-  },
-  async getAllSettings() {
-    const rows = await this._req('GET','app_settings','','');
-    const out = {};
-    rows.forEach(r => { out[r.key] = r.value; });
-    return out;
+  async set(key, value) {
+    const res = await fetch(`${SB_URL}/rest/v1/store`, {
+      method: 'POST',
+      headers: {
+        apikey: SB_KEY,
+        Authorization: `Bearer ${SB_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify({ key, value, updated_at: new Date().toISOString() })
+    });
+    if (!res.ok) console.error('SB.set error:', res.status, res.statusText, key);
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
   }
 };
 
 // ═══════════════════════════════════════════════════
-// MEMORIA RAM — caché local para render rápido
-// Nunca se escribe a Supabase directamente desde aquí
+// STORE (Supabase es la única fuente de verdad)
 // ═══════════════════════════════════════════════════
-const _mem = {
-  products:   [],
-  categories: [],
-  reviews:    {},   // { product_id: [{...}] }
-  faq:        [],
-  banners:    [],
-  stickers:   [],
-  app:        {}
-};
+const _mem = {}; // memoria en RAM, se llena al arrancar desde Supabase
 
-// Adaptadores de formato DB→interno
-function _adaptProduct(row) {
-  return {
-    id: row.id, name: row.name, cat: row.cat, sub: row.sub||'',
-    price: row.price, desc: row.description||'', emoji: row.emoji||'💎',
-    image: row.image||'', images: row.images||[], badge: row.badge||'', video: row.video||''
-  };
-}
-function _adaptCategory(row) {
-  return { id: row.id, name: row.name, emoji: row.emoji||'📎', subs: row.subs||[] };
-}
-function _adaptReview(row) {
-  return { id: row.id, pid: row.product_id, author: row.author, rating: row.rating, text: row.body||'', date: new Date(row.created_at).getTime() };
-}
-function _adaptFAQ(row) {
-  return { id: row.id, q: row.question, a: row.answer, emoji: row.emoji||'❓' };
-}
-function _adaptBanner(row) {
-  return { id: row.id, text: row.text, color: row.color||'#e8c97a', on: row.active!==false };
-}
-function _adaptSticker(row) {
-  return { id: row.id, text: row.text, pos: row.position||'top-left', visible: row.visible!==false };
-}
-
-// store — API compatible con el código existente (delegando a DB)
 const store = {
-  // Acceso a memoria RAM (para render)
   get(k, def=null) {
-    if (k === 'bcg_prods')    return _mem.products.length    ? _mem.products    : def;
-    if (k === 'bcg_cats')     return _mem.categories.length  ? _mem.categories  : def;
-    if (k === 'bcg_revs')     return Object.keys(_mem.reviews).length ? _mem.reviews : def;
-    if (k === 'bcg_faq')      return _mem.faq.length         ? _mem.faq         : def;
-    if (k === 'bcg_banners')  return _mem.banners.length     ? _mem.banners     : def;
-    if (k === 'bcg_stickers') return _mem.stickers;
-    if (k === 'bcg_app')      return _mem.app;
-    if (k === 'bcg_met')      return _memMet;
-    return def;
+    return _mem[k] !== undefined ? _mem[k] : def;
   },
-
-  // Carga inicial desde Supabase a memoria RAM
-  async loadAll() {
+  set(k, v) {
+    _mem[k] = v; // actualizar en RAM inmediatamente
+    SB.set(k, v).catch(err => { console.error("Supabase save error:", k, err); });
+  },
+  merge(k, obj) { this.set(k, {...this.get(k, {}), ...obj}); },
+  async loadFromCloud(k, def=null) {
     try {
-      const [prods, cats, revRows, faqs, banners, stickers, settings] = await Promise.all([
-        DB.getProducts().catch(()=>[]),
-        DB.getCategories().catch(()=>[]),
-        DB.getReviews().catch(()=>[]),
-        DB.getFAQ().catch(()=>[]),
-        DB.getBanners().catch(()=>[]),
-        DB.getStickers().catch(()=>[]),
-        DB.getAllSettings().catch(()=>({}))
-      ]);
-
-      _mem.products   = prods.map(_adaptProduct);
-      _mem.categories = cats.map(_adaptCategory);
-      _mem.faq        = faqs.map(_adaptFAQ);
-      _mem.banners    = banners.map(_adaptBanner);
-      _mem.stickers   = stickers.map(_adaptSticker);
-      _mem.app        = settings['appearance'] || {};
-
-      // Convertir reviews a formato { product_id: [revs] }
-      _mem.reviews = {};
-      revRows.forEach(r => {
-        const rev = _adaptReview(r);
-        if (!_mem.reviews[rev.pid]) _mem.reviews[rev.pid] = [];
-        _mem.reviews[rev.pid].push(rev);
-      });
-
-      // Si no hay datos en Supabase, cargar defaults SOLO en memoria
-      if (!_mem.products.length)   _mem.products   = DEF_PRODS;
-      if (!_mem.categories.length) _mem.categories = DEF_CATS;
-      if (!_mem.banners.length)    _mem.banners    = DEF_BANNERS;
-      if (!_mem.stickers.length)   _mem.stickers   = DEF_STICKERS;
-      if (!_mem.faq.length)        _mem.faq        = DEF_FAQ;
-
+      const v = await SB.get(k);
+      if (v !== null) {
+        _mem[k] = v;
+        return v;
+      }
+      return null; // clave no existe en Supabase todavía
     } catch(e) {
-      console.error('Error cargando datos:', e);
-      toast('⚠️ Error de conexión. Mostrando datos de ejemplo.', true);
-      _mem.products   = DEF_PRODS;
-      _mem.categories = DEF_CATS;
-      _mem.banners    = DEF_BANNERS;
-      _mem.stickers   = DEF_STICKERS;
-      _mem.faq        = DEF_FAQ;
+      console.error('Error cargando desde Supabase:', k, e);
+      return null;
     }
   }
 };
@@ -1707,8 +1522,8 @@ const store = {
 // ═══════════════════════════════════════════════════
 const CART = {
   K: 'bcg_cart',
-  get() { try { return JSON.parse(localStorage.getItem(this.K)) || []; } catch { return []; } },
-  save(items) { try { localStorage.setItem(this.K, JSON.stringify(items)); } catch {} this.updateCount(); },
+  get() { return store.get(this.K, []); },
+  save(items) { store.set(this.K, items); this.updateCount(); },
   add(product, qty = 1) {
     const items = this.get();
     const existing = items.find(i => i.id === product.id);
@@ -1746,34 +1561,24 @@ const CART = {
 // ═══════════════════════════════════════════════════
 // FAQ
 // ═══════════════════════════════════════════════════
-const FAQ_K = 'bcg_faq'; // mantenido por compatibilidad
+const FAQ_K = 'bcg_faq';
 const DEF_FAQ = [
   {id:'f1',q:'📦 ¿Hacen envíos a toda Colombia?',a:'Sí, enviamos a todos los municipios. El tiempo de entrega es de 2-5 días hábiles según la ciudad.',emoji:'📦'},
   {id:'f2',q:'💳 ¿Qué métodos de pago aceptan?',a:'Aceptamos transferencia bancaria, Nequi, Daviplata y efectivo contra entrega (solo ciudades principales).',emoji:'💳'},
   {id:'f3',q:'🔄 ¿Tienen política de devoluciones?',a:'Sí, puedes cambiar el producto dentro de los 7 días siguientes a la compra si está en perfecto estado.',emoji:'🔄'},
   {id:'f4',q:'✨ ¿Las piezas son bañadas en oro?',a:'Nuestra bisutería tiene baño de oro 18k de alta calidad con garantía de 3 meses.',emoji:'✨'},
 ];
-function getFAQ() { return _mem.faq; }
-async function saveFAQ(faqs) {
-  SEC.guard('modificar FAQ');
-  _mem.faq = faqs;
-  // Guardar cada faq individualmente (upsert por id)
-  await Promise.all(faqs.map((f,i) => DB.upsertFAQ(f, i).catch(e => console.error('Error guardando FAQ:', e))));
-}
+function getFAQ() { return store.get(FAQ_K, []); }
+function saveFAQ(f) { SEC.guard('modificar FAQ'); store.set(FAQ_K, f); }
 
 // ═══════════════════════════════════════════════════
 // METRICS
 // ═══════════════════════════════════════════════════
-// ═══════════════════════════════════════════════════
-// MÉTRICAS — solo locales por sesión (no en Supabase)
-// ═══════════════════════════════════════════════════
-let _memMet = (function(){ try { return JSON.parse(localStorage.getItem('bcg_met')) || {sess:0,views:0,pv:{},wa:{},cat:{},srch:[]}; } catch { return {sess:0,views:0,pv:{},wa:{},cat:{},srch:[]}; } })();
-
 const MET = {
   K:'bcg_met',
   empty() { return {sess:0,views:0,pv:{},wa:{},cat:{},srch:[]}; },
-  get() { return _memMet; },
-  save(d) { _memMet = d; try { localStorage.setItem(this.K, JSON.stringify(d)); } catch {} },
+  get() { return store.get(this.K, this.empty()); },
+  save(d) { store.set(this.K, d); },
   inc(f, k) {
     const d = this.get();
     if(k !== undefined) {
@@ -1801,7 +1606,7 @@ const MET = {
 // ═══════════════════════════════════════════════════
 // CATEGORIES
 // ═══════════════════════════════════════════════════
-const CAT_K = 'bcg_cats'; // mantenido por compatibilidad
+const CAT_K = 'bcg_cats';
 const DEF_CATS = [
   {id:'todas',name:'Todas',emoji:'✨',subs:[]},
   {id:'collares',name:'Collares',emoji:'📿',subs:['Gargantillas','Chokers','Largos','Cadenas']},
@@ -1811,52 +1616,20 @@ const DEF_CATS = [
   {id:'conjuntos',name:'Conjuntos',emoji:'🎁',subs:['Dúos','Tríos','Full set']},
   {id:'tiaras',name:'Tiaras & Accesorios',emoji:'👑',subs:['Tiaras','Diademas','Horquillas']},
 ];
-function getCats() { return _mem.categories; }
-async function saveCats(cats) {
-  SEC.guard('modificar categorías');
-  _mem.categories = cats;
-  await Promise.all(cats.map((c,i) => DB.upsertCategory(c, i).catch(e => console.error('Error guardando categoría:', e))));
-}
+function getCats() { return store.get(CAT_K, []); }
+function saveCats(c) { SEC.guard('modificar categorías'); store.set(CAT_K, c); }
 
 // ═══════════════════════════════════════════════════
 // PRODUCTS
 // ═══════════════════════════════════════════════════
-const PROD_K = 'bcg_prods'; // mantenido por compatibilidad
+const PROD_K = 'bcg_prods';
 const DEF_PRODS = [
   {id:'COL-001',name:'Collar Perlas Rosas',cat:'collares',sub:'',price:38000,badge:'nuevo',desc:'Collar de perlas cultivadas con dije corazón bañado en oro.',emoji:'📿',image:'',images:[]},
   {id:'COL-002',name:'Gargantilla Dorada',cat:'collares',sub:'Gargantillas',price:45000,badge:'',desc:'Gargantilla fina con eslabones rectangulares bañados en oro 18k.',emoji:'✨',image:'',images:[]},
   {id:'ARE-001',name:'Aretes Mariposa',cat:'aretes',sub:'Colgantes',price:22000,badge:'nuevo',desc:'Aretes colgantes con mariposa de resina y brillo nacarado.',emoji:'🦋',image:'',images:[]},
   {id:'PUL-001',name:'Pulsera Charm Dorada',cat:'pulseras',sub:'Charms',price:32000,badge:'nuevo',desc:'Pulsera ajustable con charms: estrella, luna, flor y corazón.',emoji:'⭐',image:'',images:[]},
 ];
-function getProds() { return _mem.products; }
-async function saveProds(prods) {
-  SEC.guard('modificar productos');
-  // saveProds ya NO se usa para guardar listas completas.
-  // Internamente actualiza la RAM; el guardado real es por upsertProduct / deleteProduct.
-  _mem.products = prods;
-}
-async function upsertProduct(p) {
-  SEC.guard('guardar productos');
-  const idx = _mem.products.findIndex(x => x.id === p.id);
-  if (idx >= 0) _mem.products[idx] = p; else _mem.products.push(p);
-  try {
-    await DB.upsertProduct(p);
-  } catch(e) {
-    toast('❌ Error guardando en Supabase: ' + e.message, true);
-    throw e;
-  }
-}
-async function deleteProduct(id) {
-  SEC.guard('eliminar productos');
-  _mem.products = _mem.products.filter(p => p.id !== id);
-  try {
-    await DB.deleteProduct(id);
-  } catch(e) {
-    toast('❌ Error eliminando en Supabase: ' + e.message, true);
-    throw e;
-  }
-}
-// Helper: detectar si una URL es video
+// Helper: get images array (handles legacy products with only 'image')
 function isVideoUrl(url) {
   return url && (url.includes('/preview') || url.includes('drive.google.com/file'));
 }
@@ -1866,28 +1639,19 @@ function getImages(p) {
   if(p.image) return [p.image];
   return [];
 }
+function getProds() { return store.get(PROD_K, []); }
+function saveProds(p) { SEC.guard('modificar productos'); store.set(PROD_K, p); }
+
 // ═══════════════════════════════════════════════════
 // REVIEWS
 // ═══════════════════════════════════════════════════
 const REV_K = 'bcg_revs';
-function getRevs() { return _mem.reviews; }
-function getProductRevs(pid) { return (_mem.reviews[pid] || []); }
-async function addRev(pid, rev) {
-  SEC.guard('publicar reseñas');
-  if (!_mem.reviews[pid]) _mem.reviews[pid] = [];
-  _mem.reviews[pid].push(rev);
-  await DB.insertReview({...rev, pid}).catch(e => console.error('Error insertando reseña:', e));
-}
-async function delRev(pid, rid) {
-  SEC.guard('eliminar reseñas');
-  if (_mem.reviews[pid]) _mem.reviews[pid] = _mem.reviews[pid].filter(x => x.id !== rid);
-  await DB.deleteReview(rid).catch(e => console.error('Error eliminando reseña:', e));
-}
-async function addRevPublic(pid, rev) {
-  if (!_mem.reviews[pid]) _mem.reviews[pid] = [];
-  _mem.reviews[pid].push(rev);
-  await DB.insertReview({...rev, pid}).catch(e => console.error('Error insertando reseña pública:', e));
-}
+function getRevs() { return store.get(REV_K, {}); }
+function saveRevs(r) { store.set(REV_K, r); }
+function getProductRevs(pid) { return (getRevs()[pid] || []); }
+function addRev(pid, rev) { SEC.guard('publicar reseñas'); const r=getRevs(); r[pid]=[...(r[pid]||[]),rev]; saveRevs(r); }
+function delRev(pid, rid) { SEC.guard('eliminar reseñas'); const r=getRevs(); r[pid]=(r[pid]||[]).filter(x=>x.id!==rid); saveRevs(r); }
+function addRevPublic(pid, rev) { const r=getRevs(); r[pid]=[...(r[pid]||[]),rev]; saveRevs(r); }
 
 // ═══════════════════════════════════════════════════
 // DESIGN / APPEARANCE
@@ -1904,22 +1668,9 @@ const DEF_STICKERS = [
   {id:'s1',text:'¡Nuevas llegadas! ✨',pos:'top-left',visible:true},
   {id:'s2',text:'Ofertas especiales 🌸',pos:'bottom-right',visible:false},
 ];
-function getBanners()  { return _mem.banners; }
-function getStickers() { return _mem.stickers; }
-function getApp()      { return _mem.app; }
-
-async function saveApp(obj) {
-  _mem.app = {..._mem.app, ...obj};
-  await DB.setSetting('appearance', _mem.app).catch(e => console.error('Error guardando apariencia:', e));
-}
-async function saveBanners(banners) {
-  _mem.banners = banners;
-  await Promise.all(banners.map((b,i) => DB.upsertBanner(b, i).catch(e => console.error('Error guardando banner:', e))));
-}
-async function saveStickers(stickers) {
-  _mem.stickers = stickers;
-  await Promise.all(stickers.map(s => DB.upsertSticker(s).catch(e => console.error('Error guardando sticker:', e))));
-}
+function getBanners() { return store.get(BANNER_K, []); }
+function getStickers() { return store.get(STICKER_K, []); }
+function getApp() { return store.get(APP_K, {}); }
 
 const COLOR_SCHEMES = {
   'rosa-elegante':{'--rd':'#b5496a','--rm':'#d4789a','--g':'#c9a050','--gl':'#e8c97a'},
@@ -1952,7 +1703,7 @@ function applyApp() {
   }
   const waNum = a.waNum || WA_NUM;
   const gl = `https://wa.me/${waNum}?text=${encodeURIComponent(WA_MESSAGES.catalog())}`;
-  ['hdrWa','ftWa','fabWa','faqWa'].forEach(id => {
+  ['hdrWa','ftWa','faqWa'].forEach(id => {
     const el = document.getElementById(id);
     if(el) {
       el.href = `https://wa.me/${waNum}?text=${encodeURIComponent(WA_MESSAGES.catalog())}`;
@@ -2644,7 +2395,7 @@ document.getElementById('starPicker').addEventListener('mouseover', e => {
 });
 document.getElementById('starPicker').addEventListener('mouseleave', () => updateStarPicker(selStar));
 
-document.getElementById('revSubmit').addEventListener('click', async () => {
+document.getElementById('revSubmit').addEventListener('click', () => {
   const err = document.getElementById('revErr');
   const author = document.getElementById('revAuthor').value.trim();
   const text = document.getElementById('revText').value.trim();
@@ -2652,15 +2403,13 @@ document.getElementById('revSubmit').addEventListener('click', async () => {
   if(!author) { err.textContent = 'Por favor escribe tu nombre.'; return; }
   if(!selStar) { err.textContent = 'Selecciona una calificación de estrellas.'; return; }
   if(text.length < 5) { err.textContent = 'La reseña debe tener al menos 5 caracteres.'; return; }
-  try {
-    await addRevPublic(revPid, {id:uid(), author, rating:selStar, text, date:Date.now()});
-    renderRevList();
-    renderAll();
-    document.getElementById('revAuthor').value = '';
-    document.getElementById('revText').value = '';
-    updateStarPicker(0);
-    toast('✅ ¡Reseña publicada! Gracias 🌸');
-  } catch(e) { err.textContent = 'Error al publicar. Intenta de nuevo.'; }
+  addRevPublic(revPid, {id:uid(), author, rating:selStar, text, date:Date.now()});
+  renderRevList();
+  renderAll();
+  document.getElementById('revAuthor').value = '';
+  document.getElementById('revText').value = '';
+  updateStarPicker(0);
+  toast('✅ ¡Reseña publicada! Gracias 🌸');
 });
 document.getElementById('revClose').addEventListener('click', closeRevModal);
 document.getElementById('revBack').addEventListener('click', closeRevModal);
@@ -2687,17 +2436,12 @@ function showPanel() {
   p.style.flex = '1';
   p.style.overflow = 'hidden';
   document.getElementById('rbadge').style.display = 'block';
-  // Recargar desde Supabase al abrir el panel para tener datos frescos
-  store.loadAll().then(() => {
-    loadDesignForm();
-    loadAppearanceForm();
-    loadProdAdminList();
-    loadCatAdmin();
-    loadFAQAdmin();
-    loadRevAdmin();
-    renderBannerAdmin();
-    renderStickerAdmin();
-  });
+  loadDesignForm();
+  loadAppearanceForm();
+  loadProdAdminList();
+  loadCatAdmin();
+  loadFAQAdmin();
+  loadRevAdmin();
 }
 
 document.getElementById('admTrig').addEventListener('click', openAdmin);
@@ -2944,6 +2688,7 @@ document.getElementById('importCsvBtn').addEventListener('click', () => {
     parsedCsvProducts.forEach(p => {
       const idx = merged.findIndex(x => x.id === p.id);
       if(idx >= 0) {
+        // Actualizar datos sin sobreescribir imágenes existentes si el CSV no trae ninguna
         const existingImages = merged[idx].images && merged[idx].images.length ? merged[idx].images : [];
         const newImages = p.images && p.images.length ? p.images : existingImages;
         merged[idx] = { ...p, images: newImages, image: newImages[0] || merged[idx].image || '' };
@@ -2953,9 +2698,7 @@ document.getElementById('importCsvBtn').addEventListener('click', () => {
         added++;
       }
     });
-    // Upsert cada producto individualmente (no reemplazar el array completo)
-    toast('⏳ Guardando en Supabase…');
-    await Promise.all(parsedCsvProducts.map(p => upsertProduct(p).catch(e => console.error('CSV upsert error:', p.id, e))));
+    saveProds(merged);
     loadProdAdminList();
     renderAll();
     document.getElementById('cancelCsv').click();
@@ -3100,14 +2843,13 @@ function editProd(id) {
   document.getElementById('prodForm').scrollIntoView({behavior:'smooth'});
 }
 
-async function deleteProd(id) {
+function deleteProd(id) {
   if(!confirm('¿Eliminar este producto?')) return;
   try {
-    await deleteProduct(id);
+    saveProds(getProds().filter(p => p.id !== id));
     loadProdAdminList(); renderAll();
     toast('✅ Producto eliminado');
   } catch(e) { toast(e.message, true); }
-}
 }
 
 document.querySelectorAll('.bopt').forEach(o => o.addEventListener('click', () => {
@@ -3146,7 +2888,7 @@ document.getElementById('cancelProd').addEventListener('click', () => {
   editId = null;
 });
 
-document.getElementById('saveProd').addEventListener('click', async () => {
+document.getElementById('saveProd').addEventListener('click', () => {
   const err = document.getElementById('prodErr');
   err.textContent = '';
   try {
@@ -3169,11 +2911,17 @@ document.getElementById('saveProd').addEventListener('click', async () => {
     const rawVideoEmbed = document.getElementById('pVideoEmbed').value.trim();
     const videoEmbed = rawVideoEmbed ? (convertDriveVideoUrl(rawVideoEmbed) || rawVideoEmbed) : '';
 
+    let list = getProds();
     const np = {id:ref, name, cat, sub, price, desc, emoji, image:firstImg, images:[...editImages], badge:selBadge, video:videoEmbed};
 
-    if(!editId && getProds().find(p => p.id === ref)) { err.textContent = 'La referencia ya existe'; return; }
+    if(editId) {
+      list = list.map(p => p.id === editId ? np : p);
+    } else {
+      if(list.find(p => p.id === ref)) { err.textContent = 'La referencia ya existe'; return; }
+      list.push(np);
+    }
 
-    await upsertProduct(np);
+    saveProds(list);
     loadProdAdminList();
     renderAll();
     renderCatPills();
@@ -3225,34 +2973,40 @@ function loadCatAdmin() {
   });
   
   el.querySelectorAll('.cai-acts .bdel').forEach(b => {
-    b.addEventListener('click', async () => {
+    b.addEventListener('click', () => {
       if(!confirm('¿Eliminar esta categoría?')) return;
       try {
-        const cats = getCats().filter(c => c.id !== b.dataset.cid);
-        await DB.deleteCategory(b.dataset.cid).catch(()=>{});
-        await saveCats(cats);
-        loadCatAdmin(); renderCatPills(); renderAll();
+        saveCats(getCats().filter(c => c.id !== b.dataset.cid));
+        loadCatAdmin();
+        renderCatPills();
+        renderAll();
         toast('✅ Categoría eliminada');
-      } catch(e) { toast(e.message, true); }
+      } catch(e) {
+        toast(e.message, true);
+      }
     });
   });
   
   el.querySelectorAll('.stx').forEach(x => {
-    x.addEventListener('click', async () => {
+    x.addEventListener('click', () => {
       try {
         const cats = getCats();
         const ci = cats.findIndex(c => c.id === x.dataset.cid);
         if(ci < 0) return;
         cats[ci].subs = cats[ci].subs.filter(s => s !== x.dataset.sub);
-        await saveCats(cats);
-        loadCatAdmin(); renderCatPills(); renderSubPills();
+        saveCats(cats);
+        loadCatAdmin();
+        renderCatPills();
+        renderSubPills();
         toast('✅ Subcategoría eliminada');
-      } catch(e) { toast(e.message, true); }
+      } catch(e) {
+        toast(e.message, true);
+      }
     });
   });
   
   el.querySelectorAll('.add-sub-btn').forEach(b => {
-    b.addEventListener('click', async () => {
+    b.addEventListener('click', () => {
       const inp = document.getElementById('asi-' + b.dataset.cid);
       const val = inp.value.trim();
       if(!val) return;
@@ -3260,13 +3014,20 @@ function loadCatAdmin() {
         const cats = getCats();
         const ci = cats.findIndex(c => c.id === b.dataset.cid);
         if(ci < 0) return;
-        if(cats[ci].subs.includes(val)) { toast('Ya existe esa subcategoría', true); return; }
+        if(cats[ci].subs.includes(val)) {
+          toast('Ya existe esa subcategoría', true);
+          return;
+        }
         cats[ci].subs.push(val);
-        await saveCats(cats);
+        saveCats(cats);
         inp.value = '';
-        loadCatAdmin(); renderCatPills(); renderSubPills();
+        loadCatAdmin();
+        renderCatPills();
+        renderSubPills();
         toast('✅ Subcategoría agregada');
-      } catch(e) { toast(e.message, true); }
+      } catch(e) {
+        toast(e.message, true);
+      }
     });
   });
   
@@ -3282,7 +3043,7 @@ function setupCatDrag(item) {
   item.addEventListener('dragend', () => { item.style.opacity = ''; catDragId = null; });
   item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
   item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
-  item.addEventListener('drop', async e => {
+  item.addEventListener('drop', e => {
     e.preventDefault();
     item.classList.remove('drag-over');
     if(!catDragId || catDragId === item.dataset.cid) return;
@@ -3293,10 +3054,13 @@ function setupCatDrag(item) {
       if(from < 0 || to < 0) return;
       const [moved] = cats.splice(from, 1);
       cats.splice(to, 0, moved);
-      await saveCats(cats);
-      loadCatAdmin(); renderCatPills();
+      saveCats(cats);
+      loadCatAdmin();
+      renderCatPills();
       toast('✅ Orden actualizado');
-    } catch(ex) { toast(ex.message, true); }
+    } catch(ex) {
+      toast(ex.message, true);
+    }
   });
 }
 
@@ -3311,23 +3075,33 @@ document.getElementById('cancelNewCat').addEventListener('click', () => {
   document.getElementById('newCatForm').style.display = 'none';
 });
 
-document.getElementById('saveNewCat').addEventListener('click', async () => {
+document.getElementById('saveNewCat').addEventListener('click', () => {
   const err = document.getElementById('catErr');
   err.textContent = '';
   try {
     SEC.guard('crear categorías');
     const name = document.getElementById('ncName').value.trim();
     const emoji = document.getElementById('ncEmoji').value.trim() || '📎';
-    if(!name) { err.textContent = 'El nombre es obligatorio'; return; }
+    if(!name) {
+      err.textContent = 'El nombre es obligatorio';
+      return;
+    }
     const id = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
     const cats = getCats();
-    if(cats.find(c => c.id === id)) { err.textContent = 'Ya existe una categoría con ese nombre'; return; }
+    if(cats.find(c => c.id === id)) {
+      err.textContent = 'Ya existe una categoría con ese nombre';
+      return;
+    }
     cats.push({id, name, emoji, subs:[]});
-    await saveCats(cats);
+    saveCats(cats);
     document.getElementById('newCatForm').style.display = 'none';
-    loadCatAdmin(); renderCatPills(); buildCatSelect();
+    loadCatAdmin();
+    renderCatPills();
+    buildCatSelect();
     toast('✅ Categoría creada');
-  } catch(e) { err.textContent = e.message; }
+  } catch(e) {
+    err.textContent = e.message;
+  }
 });
 
 // ── FAQ Admin ───────────────────────
@@ -3363,15 +3137,16 @@ function loadFAQAdmin() {
   });
   
   el.querySelectorAll('.bdel').forEach(b => {
-    b.addEventListener('click', async () => {
+    b.addEventListener('click', () => {
       if(!confirm('¿Eliminar esta pregunta?')) return;
       try {
-        const faqs = getFAQ().filter(f => f.id !== b.dataset.fid);
-        await DB.deleteFAQ(b.dataset.fid).catch(()=>{});
-        await saveFAQ(faqs);
-        loadFAQAdmin(); renderFAQ();
+        saveFAQ(getFAQ().filter(f => f.id !== b.dataset.fid));
+        loadFAQAdmin();
+        renderFAQ();
         toast('✅ Pregunta eliminada');
-      } catch(e) { toast(e.message, true); }
+      } catch(e) {
+        toast(e.message, true);
+      }
     });
   });
   
@@ -3387,7 +3162,7 @@ function setupFAQDrag(item) {
   item.addEventListener('dragend', () => { item.style.opacity = ''; faqDragId = null; });
   item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
   item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
-  item.addEventListener('drop', async e => {
+  item.addEventListener('drop', e => {
     e.preventDefault();
     item.classList.remove('drag-over');
     if(!faqDragId || faqDragId === item.dataset.fid) return;
@@ -3398,10 +3173,13 @@ function setupFAQDrag(item) {
       if(from < 0 || to < 0) return;
       const [moved] = faqs.splice(from, 1);
       faqs.splice(to, 0, moved);
-      await saveFAQ(faqs);
-      loadFAQAdmin(); renderFAQ();
+      saveFAQ(faqs);
+      loadFAQAdmin();
+      renderFAQ();
       toast('✅ Orden actualizado');
-    } catch(ex) { toast(ex.message, true); }
+    } catch(ex) {
+      toast(ex.message, true);
+    }
   });
 }
 
@@ -3417,7 +3195,7 @@ document.getElementById('cancelNewFaq').addEventListener('click', () => {
   document.getElementById('newFaqForm').style.display = 'none';
 });
 
-document.getElementById('saveNewFaq').addEventListener('click', async () => {
+document.getElementById('saveNewFaq').addEventListener('click', () => {
   const err = document.getElementById('faqErr');
   err.textContent = '';
   try {
@@ -3425,14 +3203,20 @@ document.getElementById('saveNewFaq').addEventListener('click', async () => {
     const q = document.getElementById('faqQ').value.trim();
     const a = document.getElementById('faqA').value.trim();
     const emoji = document.getElementById('faqEmoji').value.trim() || '❓';
-    if(!q || !a) { err.textContent = 'Pregunta y respuesta son obligatorias'; return; }
+    if(!q || !a) {
+      err.textContent = 'Pregunta y respuesta son obligatorias';
+      return;
+    }
     const faqs = getFAQ();
     faqs.push({id:uid(), q, a, emoji});
-    await saveFAQ(faqs);
+    saveFAQ(faqs);
     document.getElementById('newFaqForm').style.display = 'none';
-    loadFAQAdmin(); renderFAQ();
+    loadFAQAdmin();
+    renderFAQ();
     toast('✅ Pregunta agregada');
-  } catch(e) { err.textContent = e.message; }
+  } catch(e) {
+    err.textContent = e.message;
+  }
 });
 
 // ── Design Tab ─────────────────────────────
@@ -3473,27 +3257,31 @@ document.getElementById('coverOpacity').addEventListener('input', function() {
   document.getElementById('opacityVal').textContent = this.value + '%';
 });
 
-document.getElementById('saveCover').addEventListener('click', async () => {
+document.getElementById('saveCover').addEventListener('click', () => {
   try {
     SEC.guard('cambiar portada');
     const src = document.getElementById('coverArea').dataset.img || document.getElementById('coverPreview').src || '';
-    const op = parseInt(document.getElementById('coverOpacity').value);
-    await saveApp({cover:src, coverOp:op});
+    const op = document.getElementById('coverOpacity').value;
+    store.merge(APP_K, {cover:src, coverOp:parseInt(op)});
     applyApp();
     toast('✅ Portada guardada');
-  } catch(e) { toast(e.message, true); }
+  } catch(e) {
+    toast(e.message, true);
+  }
 });
 
-document.getElementById('clearCover').addEventListener('click', async () => {
+document.getElementById('clearCover').addEventListener('click', () => {
   try {
     SEC.guard('cambiar portada');
-    const a = {...getApp()}; delete a.cover;
-    _mem.app = a;
-    await DB.setSetting('appearance', a).catch(()=>{});
+    const a = getApp();
+    delete a.cover;
+    store.set(APP_K, a);
     document.getElementById('coverPreview').style.display = 'none';
     const _hbg = document.getElementById('heroBg'); if(_hbg) _hbg.style.backgroundImage = '';
     toast('✅ Portada eliminada');
-  } catch(e) { toast(e.message, true); }
+  } catch(e) {
+    toast(e.message, true);
+  }
 });
 
 let bannerDragIdx = null;
@@ -3517,32 +3305,32 @@ function renderBannerAdmin() {
       SEC.guard('modificar letreros');
       const bns = getBanners();
       bns[b.dataset.idx].on = !bns[b.dataset.idx].on;
-      await saveBanners(bns);
+      store.set(BANNER_K, bns);
       renderBannerAdmin();
     } catch(e) {
       toast(e.message, true);
     }
   }));
   
-  el.querySelectorAll('.bitem-color').forEach(c => c.addEventListener('change', async () => {
+  el.querySelectorAll('.bitem-color').forEach(c => c.addEventListener('change', () => {
     try {
       SEC.guard('modificar letreros');
       const bns = getBanners();
       bns[c.dataset.idx].color = c.value;
-      await saveBanners(bns);
+      store.set(BANNER_K, bns);
     } catch(e) {
       toast(e.message, true);
     }
   }));
   
-  el.querySelectorAll('.bitem .bedit').forEach(b => b.addEventListener('click', async () => {
+  el.querySelectorAll('.bitem .bedit').forEach(b => b.addEventListener('click', () => {
     try {
       SEC.guard('modificar letreros');
       const bns = getBanners();
       const txt = prompt('Texto del letrero:', bns[b.dataset.idx].text);
       if(txt !== null) {
         bns[b.dataset.idx].text = txt;
-        await saveBanners(bns);
+        store.set(BANNER_K, bns);
         renderBannerAdmin();
       }
     } catch(e) {
@@ -3550,13 +3338,12 @@ function renderBannerAdmin() {
     }
   }));
   
-  el.querySelectorAll('.bitem .bdel').forEach(b => b.addEventListener('click', async () => {
+  el.querySelectorAll('.bitem .bdel').forEach(b => b.addEventListener('click', () => {
     try {
       SEC.guard('modificar letreros');
-      const bns = getBanners();
-      const deleted = bns.splice(b.dataset.idx, 1);
-      if (deleted[0]) await DB.deleteBanner(deleted[0].id).catch(()=>{});
-      await saveBanners(bns);
+      let bns = getBanners();
+      bns.splice(b.dataset.idx, 1);
+      store.set(BANNER_K, bns);
       renderBannerAdmin();
     } catch(e) {
       toast(e.message, true);
@@ -3571,7 +3358,7 @@ function renderBannerAdmin() {
     item.addEventListener('dragend', () => { item.draggable = false; item.classList.remove('dragging'); bannerDragIdx = null; });
     item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
     item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
-    item.addEventListener('drop', async e => {
+    item.addEventListener('drop', e => {
       e.preventDefault();
       item.classList.remove('drag-over');
       const to = parseInt(item.dataset.idx);
@@ -3581,7 +3368,7 @@ function renderBannerAdmin() {
         const bns = getBanners();
         const [m] = bns.splice(bannerDragIdx, 1);
         bns.splice(to, 0, m);
-        await saveBanners(bns);
+        store.set(BANNER_K, bns);
         renderBannerAdmin();
       } catch(ex) {
         toast(ex.message, true);
@@ -3590,23 +3377,26 @@ function renderBannerAdmin() {
   });
 }
 
-document.getElementById('addBanner').addEventListener('click', async () => {
+document.getElementById('addBanner').addEventListener('click', () => {
   try {
     SEC.guard('agregar letreros');
     const bns = getBanners();
     bns.push({id:uid(), text:'✦ Nuevo letrero', on:true, color:'#e8c97a'});
-    await saveBanners(bns);
+    store.set(BANNER_K, bns);
     renderBannerAdmin();
-  } catch(e) { toast(e.message, true); }
+  } catch(e) {
+    toast(e.message, true);
+  }
 });
 
-document.getElementById('saveBanners').addEventListener('click', async () => {
+document.getElementById('saveBanners').addEventListener('click', () => {
   try {
     SEC.guard('guardar letreros');
-    await saveBanners(getBanners());
     renderTicker();
     toast('✅ Letreros guardados y aplicados');
-  } catch(e) { toast(e.message, true); }
+  } catch(e) {
+    toast(e.message, true);
+  }
 });
 
 function renderStickerAdmin() {
@@ -3630,7 +3420,7 @@ function renderStickerAdmin() {
     </div>
   `).join('');
   
-  el.querySelectorAll('.sitem .bedit').forEach(b => b.addEventListener('click', async () => {
+  el.querySelectorAll('.sitem .bedit').forEach(b => b.addEventListener('click', () => {
     try {
       SEC.guard('modificar etiquetas');
       const ss = getStickers();
@@ -3640,46 +3430,55 @@ function renderStickerAdmin() {
       const pos = prompt('Posición (top-left, top-right, bottom-left, bottom-right, center-left):', s.pos) || s.pos;
       const vis = confirm('¿Mostrar en la página?');
       ss[b.dataset.idx] = {...s, text:txt, pos, visible:vis};
-      await saveStickers(ss);
-      renderStickerAdmin(); renderStickers();
-    } catch(e) { toast(e.message, true); }
+      store.set(STICKER_K, ss);
+      renderStickerAdmin();
+      renderStickers();
+    } catch(e) {
+      toast(e.message, true);
+    }
   }));
   
-  el.querySelectorAll('.sitem .bdel').forEach(b => b.addEventListener('click', async () => {
+  el.querySelectorAll('.sitem .bdel').forEach(b => b.addEventListener('click', () => {
     try {
       SEC.guard('eliminar etiquetas');
-      const ss = getStickers();
-      const deleted = ss.splice(b.dataset.idx, 1);
-      if (deleted[0]) await DB.deleteSticker(deleted[0].id).catch(()=>{});
-      await saveStickers(ss);
-      renderStickerAdmin(); renderStickers();
-    } catch(e) { toast(e.message, true); }
+      let ss = getStickers();
+      ss.splice(b.dataset.idx, 1);
+      store.set(STICKER_K, ss);
+      renderStickerAdmin();
+      renderStickers();
+    } catch(e) {
+      toast(e.message, true);
+    }
   }));
 }
 
-document.getElementById('addSticker').addEventListener('click', async () => {
+document.getElementById('addSticker').addEventListener('click', () => {
   try {
     SEC.guard('agregar etiquetas');
     const ss = getStickers();
     ss.push({id:uid(), text:'✨ Texto flotante', pos:'top-left', visible:true});
-    await saveStickers(ss);
-    renderStickerAdmin(); renderStickers();
-  } catch(e) { toast(e.message, true); }
+    store.set(STICKER_K, ss);
+    renderStickerAdmin();
+    renderStickers();
+  } catch(e) {
+    toast(e.message, true);
+  }
 });
 
-document.getElementById('saveStickers').addEventListener('click', async () => {
+document.getElementById('saveStickers').addEventListener('click', () => {
   try {
     SEC.guard('guardar etiquetas');
-    await saveStickers(getStickers());
     renderStickers();
     toast('✅ Etiquetas aplicadas');
-  } catch(e) { toast(e.message, true); }
+  } catch(e) {
+    toast(e.message, true);
+  }
 });
 
-document.getElementById('saveTexts').addEventListener('click', async () => {
+document.getElementById('saveTexts').addEventListener('click', () => {
   try {
     SEC.guard('modificar textos');
-    await saveApp({
+    store.merge(APP_K, {
       logoSub: document.getElementById('apLogoSub').value,
       heroTitle: document.getElementById('apHeroT').value,
       heroSub: document.getElementById('apHeroS').value,
@@ -3687,7 +3486,9 @@ document.getElementById('saveTexts').addEventListener('click', async () => {
     });
     applyApp();
     toast('✅ Textos guardados');
-  } catch(e) { toast(e.message, true); }
+  } catch(e) {
+    toast(e.message, true);
+  }
 });
 
 // ── Appearance Admin ───────────────────────
@@ -3705,25 +3506,29 @@ document.querySelectorAll('.cpre').forEach(p => p.addEventListener('click', () =
   selScheme = p.dataset.scheme;
 }));
 
-document.getElementById('applyColor').addEventListener('click', async () => {
+document.getElementById('applyColor').addEventListener('click', () => {
   try {
     SEC.guard('cambiar colores');
-    await saveApp({scheme:selScheme});
+    store.merge(APP_K, {scheme:selScheme});
     applyScheme(selScheme);
     toast('✅ Paleta aplicada');
-  } catch(e) { toast(e.message, true); }
+  } catch(e) {
+    toast(e.message, true);
+  }
 });
 
-document.querySelectorAll('.fsbtn').forEach(b => b.addEventListener('click', async () => {
+document.querySelectorAll('.fsbtn').forEach(b => b.addEventListener('click', () => {
   try {
     SEC.guard('cambiar tipografía');
     document.querySelectorAll('.fsbtn').forEach(x => x.classList.remove('active'));
     b.classList.add('active');
     const fs = parseFloat(b.dataset.scale);
     document.documentElement.style.setProperty('--fs', fs);
-    await saveApp({fs});
+    store.merge(APP_K, {fs});
     toast('✅ Tamaño aplicado');
-  } catch(e) { toast(e.message, true); }
+  } catch(e) {
+    toast(e.message, true);
+  }
 }));
 
 // ── Reviews Admin ──────────────────────────
@@ -3753,9 +3558,9 @@ function loadRevAdmin() {
     </div>
   `).join('');
   
-  el.querySelectorAll('.bdel').forEach(b => b.addEventListener('click', async () => {
+  el.querySelectorAll('.bdel').forEach(b => b.addEventListener('click', () => {
     try {
-      await delRev(b.dataset.pid, b.dataset.rid);
+      delRev(b.dataset.pid, b.dataset.rid);
       loadRevAdmin();
       renderAll();
       toast('✅ Reseña eliminada');
@@ -3849,19 +3654,26 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 document.getElementById('exportBtn').addEventListener('click', async () => {
   try {
     SEC.guard('exportar datos');
-    toast('⏳ Descargando datos desde Supabase...');
-    const [products, categories, revRows, faqs, banners, stickers, settings] = await Promise.all([
-      DB.getProducts(), DB.getCategories(), DB.getReviews(),
-      DB.getFAQ(), DB.getBanners(), DB.getStickers(), DB.getAllSettings()
+    toast('⏳ Descargando datos...');
+    const [products, categories, reviews, faq, banners, stickers, appearance] = await Promise.all([
+      store.loadFromCloud(PROD_K, getProds()),
+      store.loadFromCloud(CAT_K, getCats()),
+      store.loadFromCloud(REV_K, getRevs()),
+      store.loadFromCloud(FAQ_K, getFAQ()),
+      store.loadFromCloud(BANNER_K, getBanners()),
+      store.loadFromCloud(STICKER_K, getStickers()),
+      store.loadFromCloud(APP_K, getApp())
     ]);
-    const data = { products, categories, reviews: revRows, faq: faqs, banners, stickers, appearance: settings['appearance']||{}, exportDate: new Date().toISOString() };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    const data = { products, categories, reviews, faq, banners, stickers, appearance, exportDate: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'bisuteriacgomez-backup.json';
     a.click();
     toast('✅ Datos exportados');
-  } catch(e) { toast(e.message, true); }
+  } catch(e) {
+    toast(e.message, true);
+  }
 });
 
 document.getElementById('importFile').addEventListener('change', function() {
@@ -3872,18 +3684,20 @@ document.getElementById('importFile').addEventListener('change', function() {
     try {
       SEC.guard('importar datos');
       const data = JSON.parse(e.target.result);
-      toast('⏳ Importando datos en Supabase…');
+      toast('⏳ Importando datos...');
       const writes = [];
-      // Importar cada registro individualmente para no borrar lo que no viene en el backup
-      if(data.products)    writes.push(...data.products.map(p => DB.upsertProduct(_adaptProduct(p)||p)));
-      if(data.categories)  writes.push(...data.categories.map((c,i) => DB.upsertCategory(_adaptCategory(c)||c, i)));
-      if(data.faq)         writes.push(...data.faq.map((f,i) => DB.upsertFAQ(_adaptFAQ(f)||f, i)));
-      if(data.banners)     writes.push(...data.banners.map((b,i) => DB.upsertBanner(_adaptBanner(b)||b, i)));
-      if(data.stickers)    writes.push(...data.stickers.map(s => DB.upsertSticker(_adaptSticker(s)||s)));
-      if(data.appearance)  writes.push(DB.setSetting('appearance', data.appearance));
+      if(data.products) writes.push(SB.set(PROD_K, data.products));
+      if(data.categories) writes.push(SB.set(CAT_K, data.categories));
+      if(data.reviews) writes.push(SB.set(REV_K, data.reviews));
+      if(data.banners) writes.push(SB.set(BANNER_K, data.banners));
+      if(data.stickers) writes.push(SB.set(STICKER_K, data.stickers));
+      if(data.faq) writes.push(SB.set(FAQ_K, data.faq));
+      if(data.appearance) writes.push(SB.set(APP_K, data.appearance));
       await Promise.all(writes);
       location.reload();
-    } catch(ex) { toast('Error importando: ' + ex.message, true); }
+    } catch(ex) {
+      toast('Error importando: ' + ex.message, true);
+    }
   };
   r.readAsText(f);
   this.value = '';
@@ -4028,7 +3842,6 @@ document.getElementById('stgl').addEventListener('click', () => {
 });
 
 window.addEventListener('scroll', () => {
-  document.getElementById('stBtn').classList.toggle('visible', scrollY > 300);
 }, {passive: true});
 
 
@@ -4043,9 +3856,23 @@ window.addEventListener('scroll', () => {
   // Mostrar skeleton mientras carga Supabase
   showSkeleton();
 
-  // ── Una sola carga desde tablas reales de Supabase ──
-  // Nunca escribe defaults a la BD; solo los muestra en memoria si está vacía
-  await store.loadAll();
+  // ── Cargar TODO desde Supabase ──
+  await Promise.all([
+    store.loadFromCloud(PROD_K),
+    store.loadFromCloud(CAT_K),
+    store.loadFromCloud(BANNER_K),
+    store.loadFromCloud(STICKER_K),
+    store.loadFromCloud(FAQ_K),
+    store.loadFromCloud(APP_K),
+    store.loadFromCloud(REV_K)
+  ]);
+
+  // Solo inicializar con defaults si Supabase no tiene nada (primera vez real)
+  if (store.get(PROD_K) === null) store.set(PROD_K, DEF_PRODS);
+  if (store.get(CAT_K) === null) store.set(CAT_K, DEF_CATS);
+  if (store.get(BANNER_K) === null) store.set(BANNER_K, DEF_BANNERS);
+  if (store.get(STICKER_K) === null) store.set(STICKER_K, DEF_STICKERS);
+  if (store.get(FAQ_K) === null) store.set(FAQ_K, DEF_FAQ);
 
   applyApp();
   renderTicker();
@@ -4061,12 +3888,16 @@ window.addEventListener('scroll', () => {
   const _sharedPid = _urlParams.get('p');
   if (_sharedPid) {
     const _sharedProd = getProds().find(p => p.id === _sharedPid);
-    if (_sharedProd) setTimeout(() => GALLERY.open(_sharedProd), 600);
+    if (_sharedProd) {
+      setTimeout(() => {
+        GALLERY.open(_sharedProd);
+      }, 600);
+    }
   }
 
   const a = getApp();
   const waNum = a.waNum || WA_NUM;
-  ['hdrWa','ftWa','fabWa','faqWa'].forEach(id => {
+  ['hdrWa','ftWa','faqWa'].forEach(id => {
     const el = document.getElementById(id);
     if(el && !el.href.includes('wa.me')) {
       el.href = `https://wa.me/${waNum}?text=${encodeURIComponent(WA_MESSAGES.catalog())}`;
