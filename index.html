@@ -252,8 +252,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,245,2
 .faq-fab{position:fixed;bottom:140px;right:16px;z-index:300;background:var(--w);border:2px solid var(--g);border-radius:var(--rbtn);padding:10px 16px;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(201,160,80,.25);transition:all .2s;font-family:'Lato',sans-serif;font-weight:600;color:var(--td)}
 .faq-fab:hover{transform:scale(1.05);background:var(--g);color:#fff}
 .faq-modal{position:fixed;inset:0;z-index:700;display:none}
-.faq-modal.open{display:flex;align-items:flex-end;justify-content:flex-start;padding-left:16px}
-@media(min-width:640px){.faq-modal.open{align-items:center;padding-left:24px}}
+.faq-modal.open{display:flex;align-items:flex-end;justify-content:center}
+@media(min-width:640px){.faq-modal.open{align-items:center}}
 .faq-backdrop{position:absolute;inset:0;background:rgba(20,5,15,.6);backdrop-filter:blur(4px)}
 .faq-box{position:relative;background:var(--w);border-radius:24px 24px 0 0;width:100%;max-width:450px;max-height:85vh;display:flex;flex-direction:column;animation:slideUp .3s ease}
 @media(min-width:640px){.faq-box{border-radius:20px}}
@@ -634,24 +634,9 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 /* ── STOCK WARNING ────────────────────────── */
 
 
-/* ── TAWK.TO — siempre visible, nunca tapado ── */
-#tawk-bubble-container,div[id^="tawk-"],iframe[src*="tawk.to"],iframe[title*="chat" i]{z-index:999999!important;visibility:visible!important;opacity:1!important;pointer-events:all!important}
 </style>
 </head>
 <body>
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/6a1458f3d9e5ba1c3421fb2d/1jpfnmudl';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
 
 <!-- FONDO EMOJIS DECORATIVOS -->
 <div class="bg-emojis" aria-hidden="true"></div>
@@ -828,15 +813,15 @@ s0.parentNode.insertBefore(s1,s0);
 <!-- FAQ MODAL -->
 <div class="faq-modal" id="faqModal">
   <div class="faq-backdrop" id="faqBack"></div>
-  <div class="faq-box">
-    <div class="faq-header">
-      <h3>💬 Preguntas Frecuentes</h3>
+  <div class="faq-box" style="text-align:left!important">
+    <div class="faq-header" style="text-align:left!important">
+      <h3 style="text-align:left!important">💬 Preguntas Frecuentes</h3>
       <button class="faq-close" id="faqClose">✕</button>
     </div>
-    <div class="faq-body" id="faqBody"></div>
-    <div class="faq-contact">
-      <p>¿No encuentras tu respuesta?</p>
-      <a href="#" class="faq-wa-btn" id="faqWa">📱 Hablar con Carolina</a>
+    <div class="faq-body" id="faqBody" style="text-align:left!important"></div>
+    <div class="faq-contact" style="text-align:left!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important">
+      <p style="text-align:left!important">¿No encuentras tu respuesta?</p>
+      <a href="#" class="faq-wa-btn" id="faqWa" style="align-self:flex-start!important;display:inline-block!important">📱 Hablar con Carolina</a>
     </div>
   </div>
 </div>
@@ -1899,9 +1884,9 @@ function renderFAQ() {
   const faqs = getFAQ();
   const body = document.getElementById('faqBody');
   body.innerHTML = faqs.map(faq => `
-    <div class="faq-item">
-      <div class="faq-q">${faq.emoji || '❓'} ${sanitize(faq.q)}</div>
-      <div class="faq-a">${sanitize(faq.a)}</div>
+    <div class="faq-item" style="text-align:left!important">
+      <div class="faq-q" style="text-align:left!important;justify-content:flex-start!important">${faq.emoji || '❓'} ${sanitize(faq.q)}</div>
+      <div class="faq-a" style="text-align:left!important">${sanitize(faq.a)}</div>
     </div>
   `).join('');
 }
@@ -4044,6 +4029,18 @@ window.addEventListener('scroll', () => {
 })();
 
 </script>
-
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6a1458f3d9e5ba1c3421fb2d/1jpfnmudl';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
 </body>
 </html>
