@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{overflow-x:hidden;max-width:100%}
+html,body{overflow-x:clip;max-width:100%}
 img{display:block;max-width:100%}
 :root{
   --rd:#b5496a;--rm:#d4789a;--rb:#fce8ef;--rc:#fff5f8;
@@ -84,7 +84,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,245,2
 .hero-blob-3{width:200px;height:200px;background:rgba(255,180,210,0.3);top:40%;left:5%;animation:blobFloat 6s ease-in-out infinite alternate}
 @keyframes blobFloat{from{transform:translate(0,0) scale(1)}to{transform:translate(15px,20px) scale(1.08)}}
 .hero-dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,rgba(201,160,80,0.18) 1.5px,transparent 1.5px);background-size:28px 28px;opacity:0.5}
-.bg-emojis{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bg-emojis{position:fixed;inset:0;pointer-events:none;z-index:0}
 .bge{position:absolute;font-size:1.6rem;opacity:0;user-select:none;will-change:transform}
 .hsticker{position:absolute;pointer-events:none;user-select:none;animation:hstickerFloat linear infinite;filter:drop-shadow(0 2px 8px rgba(180,73,106,0.15))}
 @keyframes hstickerFloat{0%{transform:translateY(0) rotate(var(--r0)) scale(1)}30%{transform:translateY(-12px) rotate(calc(var(--r0) + 6deg)) scale(1.04)}60%{transform:translateY(-6px) rotate(calc(var(--r0) - 4deg)) scale(0.97)}100%{transform:translateY(0) rotate(var(--r0)) scale(1)}}
@@ -270,8 +270,6 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,245,2
 .faq-a{font-family:'Lato',sans-serif;font-size:.8rem;color:var(--tm);line-height:1.6}
 .faq-contact{padding:16px 20px;border-top:1px solid rgba(201,160,80,.12);text-align:center;background:var(--rc)}
 .faq-contact p{font-family:'Lato',sans-serif;font-size:.8rem;color:var(--tm);margin-bottom:10px}
-.faq-wa-btn{display:inline-block;background:#25d366;color:#fff;padding:10px 24px;border-radius:var(--rbtn);text-decoration:none;font-family:'Lato',sans-serif;font-weight:700;font-size:.85rem;transition:all .2s}
-.faq-wa-btn:hover{background:#1da851;transform:translateY(-2px)}
 
 /* ── RELATED PRODUCTS ─────────────────────── */
 .related-sec{max-width:var(--mw);margin:0 auto clamp(40px,8vw,80px);padding:0 var(--px);display:none}
@@ -327,6 +325,11 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 .admin-trig svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2}
 
 /* ── FAB ──────────────────────────────────── */
+.fab-wa{position:fixed;bottom:20px;right:16px;z-index:300;display:none;align-items:center;gap:8px;background:#25d366;color:#fff;border-radius:var(--rbtn);padding:12px 18px;font-family:'Lato',sans-serif;font-weight:700;font-size:.85rem;text-decoration:none;box-shadow:0 6px 24px rgba(37,211,102,.4);transition:transform .2s}
+.fab-wa:hover{transform:scale(1.05)}
+.fab-wa svg{width:20px;height:20px;fill:currentColor;flex-shrink:0}
+.scroll-top{position:fixed;bottom:26px;right:22px;z-index:250;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--rd),#8b2f4e);color:var(--gl);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 4px 16px rgba(180,73,106,.32);opacity:0;transform:translateY(12px);transition:all .3s;pointer-events:none}
+.scroll-top.visible{opacity:1;transform:translateY(0);pointer-events:all}
 
 /* ══════════════════════════════════════════
    ADMIN PANEL
@@ -544,6 +547,8 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   .cat-pills::-webkit-scrollbar{display:none}
   .cat-pill{scroll-snap-align:start}
   .frow{flex-direction:column;align-items:flex-start;gap:8px}
+  .fab-wa{display:flex}
+  .scroll-top{bottom:76px;right:14px}
   .faq-fab{bottom:100px}
 }
 @media(min-width:480px) and (max-width:767px){
@@ -556,6 +561,8 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   .cat-pills::-webkit-scrollbar{display:none}
   .prod-grid{grid-template-columns:repeat(2,1fr)}
   .frow{flex-direction:column;align-items:flex-start;gap:8px}
+  .fab-wa{display:flex}
+  .scroll-top{bottom:76px}
   .faq-fab{bottom:100px}
 }
 @media(min-width:768px) and (max-width:1023px){
@@ -789,6 +796,11 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   </button>
 </footer>
 
+<a href="#" id="fabWa" class="fab-wa">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2.003C6.485 2.003 2 6.486 2 12.004a9.958 9.958 0 001.47 5.223L2.008 22l4.905-1.444A9.959 9.959 0 0012.004 22C17.522 22 22 17.518 22 12.004S17.522 2.003 12.004 2.003zm0 18.185a8.17 8.17 0 01-4.17-1.143l-.299-.178-3.092.91.927-3.005-.194-.307A8.192 8.192 0 013.82 12.004c0-4.513 3.672-8.183 8.184-8.183 4.51 0 8.183 3.67 8.183 8.183 0 4.51-3.673 8.184-8.183 8.184z"/></svg>
+  Escríbenos
+</a>
+<button class="scroll-top" id="stBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Arriba">↑</button>
 
 <!-- FAQ FLOATING BUTTON -->
 <button class="faq-fab" id="faqFab">
@@ -801,14 +813,11 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <div class="faq-backdrop" id="faqBack"></div>
   <div class="faq-box">
     <div class="faq-header">
-      <h3>💬 Preguntas Frecuentes</h3>
+      <h3 style="flex:1;text-align:left">💬 Preguntas Frecuentes</h3>
       <button class="faq-close" id="faqClose">✕</button>
     </div>
     <div class="faq-body" id="faqBody"></div>
-    <div class="faq-contact">
-      <p>¿No encuentras tu respuesta?</p>
-      <a href="#" class="faq-wa-btn" id="faqWa">📱 Hablar con Carolina</a>
-    </div>
+
   </div>
 </div>
 
@@ -1430,27 +1439,27 @@ const AUTO_BACKUP = {
     }
   },
   async create() {
-    const [products, categories, reviews, faq, appearance] = await Promise.all([
-      store.loadFromCloud(PROD_K, getProds()),
-      store.loadFromCloud(CAT_K, getCats()),
-      store.loadFromCloud(REV_K, getRevs()),
-      store.loadFromCloud(FAQ_K, getFAQ()),
-      store.loadFromCloud(APP_K, getApp())
-    ]);
-    const data = { products, categories, reviews, faq, appearance, timestamp: new Date().toISOString() };
-    localStorage.setItem('bcg_auto_backup', JSON.stringify(data));
-    localStorage.setItem('bcg_last_backup', Date.now().toString());
+    try {
+      const [prods,cats,revRows,faqs,banners,stickers,settings] = await Promise.all([
+        DB.getProducts().catch(()=>[]),DB.getCategories().catch(()=>[]),DB.getReviews().catch(()=>[]),
+        DB.getFAQ().catch(()=>[]),DB.getBanners().catch(()=>[]),DB.getStickers().catch(()=>[]),DB.getAllSettings().catch(()=>({}))
+      ]);
+      const data={products:prods,categories:cats,reviews:revRows,faq:faqs,banners,stickers,appearance:settings['appearance']||{},timestamp:new Date().toISOString()};
+      localStorage.setItem('bcg_auto_backup',JSON.stringify(data));
+      localStorage.setItem('bcg_last_backup',Date.now().toString());
+    } catch(e){console.warn('Auto-backup falló:',e);}
   },
   async restore() {
     const backup = localStorage.getItem('bcg_auto_backup');
-    if(backup && confirm('¿Restaurar backup automático?')) {
+    if(backup && confirm('¿Restaurar backup automático local?')) {
       const data = JSON.parse(backup);
       const writes = [];
-      if(data.products) writes.push(SB.set(PROD_K, data.products));
-      if(data.categories) writes.push(SB.set(CAT_K, data.categories));
-      if(data.reviews) writes.push(SB.set(REV_K, data.reviews));
-      if(data.faq) writes.push(SB.set(FAQ_K, data.faq));
-      if(data.appearance) writes.push(SB.set(APP_K, data.appearance));
+      if(data.products)   writes.push(...data.products.map(p=>DB.upsertProduct(p)));
+      if(data.categories) writes.push(...data.categories.map((c,i)=>DB.upsertCategory(c,i)));
+      if(data.faq)        writes.push(...(data.faq||[]).map((f,i)=>DB.upsertFAQ(f,i)));
+      if(data.banners)    writes.push(...(data.banners||[]).map((b,i)=>DB.upsertBanner(b,i)));
+      if(data.stickers)   writes.push(...(data.stickers||[]).map(s=>DB.upsertSticker(s)));
+      if(data.appearance) writes.push(DB.setSetting('appearance',data.appearance));
       await Promise.all(writes);
       location.reload();
     }
@@ -1463,67 +1472,105 @@ const AUTO_BACKUP = {
 const SB_URL = 'https://mbxqxyuogxzujyaqnncw.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ieHF4eXVvZ3h6dWp5YXFubmN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NDg0NzAsImV4cCI6MjA5NDUyNDQ3MH0.eXviIBqkvmDje6hxVEONtGPeUq5vQLbzlhwaxqzAOKQ';
 
-const SB = {
-  async get(key) {
-    const res = await fetch(`${SB_URL}/rest/v1/store?key=eq.${encodeURIComponent(key)}&select=value`, {
-      headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
-    });
-    if (!res.ok) { console.error('SB.get error:', res.status, res.statusText, key); return null; }
-    const rows = await res.json();
-    return rows.length ? rows[0].value : null;
+// ═══════════════════════════════════════════════════
+// DB — tablas reales de Supabase (un registro por fila)
+// ═══════════════════════════════════════════════════
+const DB = {
+  _h() {
+    return { 'apikey':SB_KEY, 'Authorization':`Bearer ${SB_KEY}`,
+      'Content-Type':'application/json',
+      'Prefer':'resolution=merge-duplicates,return=representation' };
   },
-  async set(key, value) {
-    const res = await fetch(`${SB_URL}/rest/v1/store`, {
-      method: 'POST',
-      headers: {
-        apikey: SB_KEY,
-        Authorization: `Bearer ${SB_KEY}`,
-        'Content-Type': 'application/json',
-        Prefer: 'resolution=merge-duplicates'
-      },
-      body: JSON.stringify({ key, value, updated_at: new Date().toISOString() })
+  async _req(method, table, body, params='') {
+    const res = await fetch(`${SB_URL}/rest/v1/${table}${params}`, {
+      method, headers: this._h(),
+      body: body ? JSON.stringify(body) : undefined
     });
-    if (!res.ok) console.error('SB.set error:', res.status, res.statusText, key);
-    try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
-  }
+    if (!res.ok) { const t=await res.text().catch(()=>''); throw new Error(`DB ${method} ${table}: ${res.status} ${t}`); }
+    if (res.status === 204) return [];
+    return res.json().catch(()=>[]);
+  },
+  async getProducts()       { return this._req('GET','products','','?order=created_at.asc'); },
+  async upsertProduct(p)    { return this._req('POST','products',{id:p.id,name:p.name||'',cat:p.cat||'collares',sub:p.sub||'',price:p.price||0,description:p.desc||p.description||'',emoji:p.emoji||'💎',image:p.image||'',images:Array.isArray(p.images)?p.images:[],badge:p.badge||'',video:p.video||''}); },
+  async deleteProduct(id)   { return this._req('DELETE','products','',`?id=eq.${encodeURIComponent(id)}`); },
+  async getCategories()     { return this._req('GET','categories','','?order=sort_order.asc'); },
+  async upsertCategory(c,o) { return this._req('POST','categories',{id:c.id,name:c.name||'',emoji:c.emoji||'📎',subs:Array.isArray(c.subs)?c.subs:[],sort_order:o||0}); },
+  async deleteCategory(id)  { return this._req('DELETE','categories','',`?id=eq.${encodeURIComponent(id)}`); },
+  async getReviews()        { return this._req('GET','reviews','','?order=created_at.asc'); },
+  async insertReview(r)     { return this._req('POST','reviews',{id:r.id,product_id:r.pid||r.product_id,author:r.author||'',rating:r.rating||5,body:r.text||r.body||''}); },
+  async deleteReview(id)    { return this._req('DELETE','reviews','',`?id=eq.${encodeURIComponent(id)}`); },
+  async getFAQ()            { return this._req('GET','faq','','?order=sort_order.asc'); },
+  async upsertFAQ(f,o)      { return this._req('POST','faq',{id:f.id,question:f.q||f.question||'',answer:f.a||f.answer||'',emoji:f.emoji||'❓',sort_order:o||0}); },
+  async deleteFAQ(id)       { return this._req('DELETE','faq','',`?id=eq.${encodeURIComponent(id)}`); },
+  async getBanners()        { return this._req('GET','banners','','?order=sort_order.asc'); },
+  async upsertBanner(b,o)   { return this._req('POST','banners',{id:b.id,text:b.text||'',color:b.color||'#e8c97a',active:b.on!==false,sort_order:o||0}); },
+  async deleteBanner(id)    { return this._req('DELETE','banners','',`?id=eq.${encodeURIComponent(id)}`); },
+  async getStickers()       { return this._req('GET','stickers','',''); },
+  async upsertSticker(s)    { return this._req('POST','stickers',{id:s.id,text:s.text||'',position:s.pos||s.position||'top-left',visible:s.visible!==false}); },
+  async deleteSticker(id)   { return this._req('DELETE','stickers','',`?id=eq.${encodeURIComponent(id)}`); },
+  async getAllSettings()     { const r=await this._req('GET','app_settings','',''); const o={}; if(Array.isArray(r)) r.forEach(x=>{o[x.key]=x.value;}); return o; },
+  async setSetting(k,v)     { return this._req('POST','app_settings',{key:k,value:v,updated_at:new Date().toISOString()}); }
 };
 
+function _adaptProduct(r)  { return {id:r.id,name:r.name,cat:r.cat,sub:r.sub||'',price:r.price,desc:r.description||'',emoji:r.emoji||'💎',image:r.image||'',images:Array.isArray(r.images)?r.images:[],badge:r.badge||'',video:r.video||''}; }
+function _adaptCategory(r) { return {id:r.id,name:r.name,emoji:r.emoji||'📎',subs:Array.isArray(r.subs)?r.subs:[]}; }
+function _adaptReview(r)   { return {id:r.id,pid:r.product_id,author:r.author,rating:r.rating,text:r.body||'',date:new Date(r.created_at).getTime()}; }
+function _adaptFAQ(r)      { return {id:r.id,q:r.question,a:r.answer,emoji:r.emoji||'❓'}; }
+function _adaptBanner(r)   { return {id:r.id,text:r.text,color:r.color||'#e8c97a',on:r.active!==false}; }
+function _adaptSticker(r)  { return {id:r.id,text:r.text,pos:r.position||'top-left',visible:r.visible!==false}; }
+
 // ═══════════════════════════════════════════════════
-// STORE (Supabase es la única fuente de verdad)
+// MEMORIA RAM — caché para render rápido
 // ═══════════════════════════════════════════════════
-const _mem = {}; // memoria en RAM, se llena al arrancar desde Supabase
+const _mem = { products:[], categories:[], reviews:{}, faq:[], banners:[], stickers:[], app:{} };
 
 const store = {
   get(k, def=null) {
-    return _mem[k] !== undefined ? _mem[k] : def;
+    if (k==='bcg_prods')    return _mem.products.length    ? _mem.products    : def;
+    if (k==='bcg_cats')     return _mem.categories.length  ? _mem.categories  : def;
+    if (k==='bcg_revs')     return Object.keys(_mem.reviews).length ? _mem.reviews : (def||{});
+    if (k==='bcg_faq')      return _mem.faq.length         ? _mem.faq         : def;
+    if (k==='bcg_banners')  return _mem.banners.length     ? _mem.banners     : (def||[]);
+    if (k==='bcg_stickers') return _mem.stickers;
+    if (k==='bcg_app')      return _mem.app;
+    return def;
   },
-  set(k, v) {
-    _mem[k] = v; // actualizar en RAM inmediatamente
-    SB.set(k, v).catch(err => { console.error("Supabase save error:", k, err); });
-  },
-  merge(k, obj) { this.set(k, {...this.get(k, {}), ...obj}); },
-  async loadFromCloud(k, def=null) {
+  async loadAll() {
     try {
-      const v = await SB.get(k);
-      if (v !== null) {
-        _mem[k] = v;
-        return v;
-      }
-      return null; // clave no existe en Supabase todavía
+      const [prods,cats,revRows,faqs,banners,stickers,settings] = await Promise.all([
+        DB.getProducts().catch(()=>[]), DB.getCategories().catch(()=>[]),
+        DB.getReviews().catch(()=>[]),  DB.getFAQ().catch(()=>[]),
+        DB.getBanners().catch(()=>[]),  DB.getStickers().catch(()=>[]),
+        DB.getAllSettings().catch(()=>({}))
+      ]);
+      if(prods.length)    _mem.products   = prods.map(_adaptProduct);
+      if(cats.length)     _mem.categories = cats.map(_adaptCategory);
+      if(faqs.length)     _mem.faq        = faqs.map(_adaptFAQ);
+      if(banners.length)  _mem.banners    = banners.map(_adaptBanner);
+      if(stickers.length) _mem.stickers   = stickers.map(_adaptSticker);
+      if(settings && settings['appearance']) _mem.app = settings['appearance'];
+      _mem.reviews = {};
+      if(Array.isArray(revRows)) revRows.forEach(r=>{ const v=_adaptReview(r); if(!_mem.reviews[v.pid]) _mem.reviews[v.pid]=[]; _mem.reviews[v.pid].push(v); });
+      if(!_mem.products.length)   _mem.products   = DEF_PRODS;
+      if(!_mem.categories.length) _mem.categories = DEF_CATS;
+      if(!_mem.banners.length)    _mem.banners    = DEF_BANNERS;
+      if(!_mem.stickers.length)   _mem.stickers   = DEF_STICKERS;
+      if(!_mem.faq.length)        _mem.faq        = DEF_FAQ;
     } catch(e) {
-      console.error('Error cargando desde Supabase:', k, e);
-      return null;
+      console.error('Error cargando datos:', e);
+      _mem.products=DEF_PRODS; _mem.categories=DEF_CATS;
+      _mem.banners=DEF_BANNERS; _mem.stickers=DEF_STICKERS; _mem.faq=DEF_FAQ;
     }
   }
 };
 
 // ═══════════════════════════════════════════════════
-// CART
+// CART — localStorage por visitante (nunca Supabase)
 // ═══════════════════════════════════════════════════
 const CART = {
   K: 'bcg_cart',
-  get() { return store.get(this.K, []); },
-  save(items) { store.set(this.K, items); this.updateCount(); },
+  get() { try { return JSON.parse(localStorage.getItem(this.K))||[]; } catch { return []; } },
+  save(items) { try { localStorage.setItem(this.K, JSON.stringify(items)); } catch {} this.updateCount(); },
   add(product, qty = 1) {
     const items = this.get();
     const existing = items.find(i => i.id === product.id);
@@ -1568,8 +1615,12 @@ const DEF_FAQ = [
   {id:'f3',q:'🔄 ¿Tienen política de devoluciones?',a:'Sí, puedes cambiar el producto dentro de los 7 días siguientes a la compra si está en perfecto estado.',emoji:'🔄'},
   {id:'f4',q:'✨ ¿Las piezas son bañadas en oro?',a:'Nuestra bisutería tiene baño de oro 18k de alta calidad con garantía de 3 meses.',emoji:'✨'},
 ];
-function getFAQ() { return store.get(FAQ_K, []); }
-function saveFAQ(f) { SEC.guard('modificar FAQ'); store.set(FAQ_K, f); }
+function getFAQ() { return _mem.faq; }
+async function saveFAQ(faqs) {
+  SEC.guard('modificar FAQ');
+  _mem.faq = faqs;
+  await Promise.all(faqs.map((f,i) => DB.upsertFAQ(f,i).catch(e=>console.error('saveFAQ:',e))));
+}
 
 // ═══════════════════════════════════════════════════
 // METRICS
@@ -1577,8 +1628,8 @@ function saveFAQ(f) { SEC.guard('modificar FAQ'); store.set(FAQ_K, f); }
 const MET = {
   K:'bcg_met',
   empty() { return {sess:0,views:0,pv:{},wa:{},cat:{},srch:[]}; },
-  get() { return store.get(this.K, this.empty()); },
-  save(d) { store.set(this.K, d); },
+  get() { try { return JSON.parse(localStorage.getItem(this.K))||this.empty(); } catch { return this.empty(); } },
+  save(d) { try { localStorage.setItem(this.K, JSON.stringify(d)); } catch {} },
   inc(f, k) {
     const d = this.get();
     if(k !== undefined) {
@@ -1616,8 +1667,12 @@ const DEF_CATS = [
   {id:'conjuntos',name:'Conjuntos',emoji:'🎁',subs:['Dúos','Tríos','Full set']},
   {id:'tiaras',name:'Tiaras & Accesorios',emoji:'👑',subs:['Tiaras','Diademas','Horquillas']},
 ];
-function getCats() { return store.get(CAT_K, []); }
-function saveCats(c) { SEC.guard('modificar categorías'); store.set(CAT_K, c); }
+function getCats() { return _mem.categories; }
+async function saveCats(cats) {
+  SEC.guard('modificar categorías');
+  _mem.categories = cats;
+  await Promise.all(cats.map((c,i) => DB.upsertCategory(c,i).catch(e=>console.error('saveCats:',e))));
+}
 
 // ═══════════════════════════════════════════════════
 // PRODUCTS
@@ -1639,19 +1694,42 @@ function getImages(p) {
   if(p.image) return [p.image];
   return [];
 }
-function getProds() { return store.get(PROD_K, []); }
-function saveProds(p) { SEC.guard('modificar productos'); store.set(PROD_K, p); }
+function getProds() { return _mem.products; }
+async function saveProds(prods) { _mem.products = prods; }
+async function upsertProduct(p) {
+  SEC.guard('guardar productos');
+  const idx = _mem.products.findIndex(x => x.id === p.id);
+  if(idx>=0) _mem.products[idx]=p; else _mem.products.push(p);
+  await DB.upsertProduct(p);
+}
+async function deleteProduct(id) {
+  SEC.guard('eliminar productos');
+  _mem.products = _mem.products.filter(p => p.id !== id);
+  await DB.deleteProduct(id);
+}
 
 // ═══════════════════════════════════════════════════
 // REVIEWS
 // ═══════════════════════════════════════════════════
 const REV_K = 'bcg_revs';
-function getRevs() { return store.get(REV_K, {}); }
-function saveRevs(r) { store.set(REV_K, r); }
-function getProductRevs(pid) { return (getRevs()[pid] || []); }
-function addRev(pid, rev) { SEC.guard('publicar reseñas'); const r=getRevs(); r[pid]=[...(r[pid]||[]),rev]; saveRevs(r); }
-function delRev(pid, rid) { SEC.guard('eliminar reseñas'); const r=getRevs(); r[pid]=(r[pid]||[]).filter(x=>x.id!==rid); saveRevs(r); }
-function addRevPublic(pid, rev) { const r=getRevs(); r[pid]=[...(r[pid]||[]),rev]; saveRevs(r); }
+function getRevs() { return _mem.reviews; }
+function getProductRevs(pid) { return (_mem.reviews[pid] || []); }
+async function addRev(pid, rev) {
+  SEC.guard('publicar reseñas');
+  if(!_mem.reviews[pid]) _mem.reviews[pid]=[];
+  _mem.reviews[pid].push(rev);
+  await DB.insertReview({...rev,pid}).catch(e=>console.error('addRev:',e));
+}
+async function delRev(pid, rid) {
+  SEC.guard('eliminar reseñas');
+  if(_mem.reviews[pid]) _mem.reviews[pid]=_mem.reviews[pid].filter(x=>x.id!==rid);
+  await DB.deleteReview(rid).catch(e=>console.error('delRev:',e));
+}
+async function addRevPublic(pid, rev) {
+  if(!_mem.reviews[pid]) _mem.reviews[pid]=[];
+  _mem.reviews[pid].push(rev);
+  await DB.insertReview({...rev,pid}).catch(e=>console.error('addRevPublic:',e));
+}
 
 // ═══════════════════════════════════════════════════
 // DESIGN / APPEARANCE
@@ -1668,9 +1746,12 @@ const DEF_STICKERS = [
   {id:'s1',text:'¡Nuevas llegadas! ✨',pos:'top-left',visible:true},
   {id:'s2',text:'Ofertas especiales 🌸',pos:'bottom-right',visible:false},
 ];
-function getBanners() { return store.get(BANNER_K, []); }
-function getStickers() { return store.get(STICKER_K, []); }
-function getApp() { return store.get(APP_K, {}); }
+function getBanners()  { return _mem.banners; }
+function getStickers() { return _mem.stickers; }
+function getApp()      { return _mem.app; }
+async function saveApp(obj) { _mem.app={..._mem.app,...obj}; await DB.setSetting('appearance',_mem.app).catch(e=>console.error('saveApp:',e)); }
+async function saveBanners(bns) { _mem.banners=bns; await Promise.all(bns.map((b,i)=>DB.upsertBanner(b,i).catch(e=>console.error('saveBanners:',e)))); }
+async function saveStickers(ss) { _mem.stickers=ss; await Promise.all(ss.map(s=>DB.upsertSticker(s).catch(e=>console.error('saveStickers:',e)))); }
 
 const COLOR_SCHEMES = {
   'rosa-elegante':{'--rd':'#b5496a','--rm':'#d4789a','--g':'#c9a050','--gl':'#e8c97a'},
@@ -1703,7 +1784,7 @@ function applyApp() {
   }
   const waNum = a.waNum || WA_NUM;
   const gl = `https://wa.me/${waNum}?text=${encodeURIComponent(WA_MESSAGES.catalog())}`;
-  ['hdrWa','ftWa','faqWa'].forEach(id => {
+  ['hdrWa','ftWa','fabWa'].forEach(id => {
     const el = document.getElementById(id);
     if(el) {
       el.href = `https://wa.me/${waNum}?text=${encodeURIComponent(WA_MESSAGES.catalog())}`;
@@ -2395,7 +2476,7 @@ document.getElementById('starPicker').addEventListener('mouseover', e => {
 });
 document.getElementById('starPicker').addEventListener('mouseleave', () => updateStarPicker(selStar));
 
-document.getElementById('revSubmit').addEventListener('click', () => {
+document.getElementById('revSubmit').addEventListener('click', async () => {
   const err = document.getElementById('revErr');
   const author = document.getElementById('revAuthor').value.trim();
   const text = document.getElementById('revText').value.trim();
@@ -2403,13 +2484,14 @@ document.getElementById('revSubmit').addEventListener('click', () => {
   if(!author) { err.textContent = 'Por favor escribe tu nombre.'; return; }
   if(!selStar) { err.textContent = 'Selecciona una calificación de estrellas.'; return; }
   if(text.length < 5) { err.textContent = 'La reseña debe tener al menos 5 caracteres.'; return; }
-  addRevPublic(revPid, {id:uid(), author, rating:selStar, text, date:Date.now()});
-  renderRevList();
-  renderAll();
-  document.getElementById('revAuthor').value = '';
-  document.getElementById('revText').value = '';
-  updateStarPicker(0);
-  toast('✅ ¡Reseña publicada! Gracias 🌸');
+  try {
+    await addRevPublic(revPid, {id:uid(), author, rating:selStar, text, date:Date.now()});
+    renderRevList(); renderAll();
+    document.getElementById('revAuthor').value = '';
+    document.getElementById('revText').value = '';
+    updateStarPicker(0);
+    toast('✅ ¡Reseña publicada! Gracias 🌸');
+  } catch(e) { err.textContent = 'Error al publicar. Intenta de nuevo.'; }
 });
 document.getElementById('revClose').addEventListener('click', closeRevModal);
 document.getElementById('revBack').addEventListener('click', closeRevModal);
@@ -2436,12 +2518,16 @@ function showPanel() {
   p.style.flex = '1';
   p.style.overflow = 'hidden';
   document.getElementById('rbadge').style.display = 'block';
-  loadDesignForm();
-  loadAppearanceForm();
-  loadProdAdminList();
-  loadCatAdmin();
-  loadFAQAdmin();
-  loadRevAdmin();
+  store.loadAll().then(() => {
+    loadDesignForm(); loadAppearanceForm();
+    loadProdAdminList(); loadCatAdmin();
+    loadFAQAdmin(); loadRevAdmin();
+    renderBannerAdmin(); renderStickerAdmin();
+  }).catch(() => {
+    loadDesignForm(); loadAppearanceForm();
+    loadProdAdminList(); loadCatAdmin();
+    loadFAQAdmin(); loadRevAdmin();
+  });
 }
 
 document.getElementById('admTrig').addEventListener('click', openAdmin);
@@ -2678,7 +2764,7 @@ document.getElementById('csvFile').addEventListener('change', function() {
   this.value = '';
 });
 
-document.getElementById('importCsvBtn').addEventListener('click', () => {
+document.getElementById('importCsvBtn').addEventListener('click', async () => {
   if(!parsedCsvProducts.length) return;
   try {
     SEC.guard('importar productos CSV');
@@ -2698,7 +2784,8 @@ document.getElementById('importCsvBtn').addEventListener('click', () => {
         added++;
       }
     });
-    saveProds(merged);
+    toast('⏳ Guardando en Supabase...');
+    await Promise.all(parsedCsvProducts.map(p=>upsertProduct(p).catch(e=>console.error('CSV:',p.id,e))));
     loadProdAdminList();
     renderAll();
     document.getElementById('cancelCsv').click();
@@ -2843,10 +2930,10 @@ function editProd(id) {
   document.getElementById('prodForm').scrollIntoView({behavior:'smooth'});
 }
 
-function deleteProd(id) {
+async function deleteProd(id) {
   if(!confirm('¿Eliminar este producto?')) return;
   try {
-    saveProds(getProds().filter(p => p.id !== id));
+    await deleteProduct(id);
     loadProdAdminList(); renderAll();
     toast('✅ Producto eliminado');
   } catch(e) { toast(e.message, true); }
@@ -2888,7 +2975,7 @@ document.getElementById('cancelProd').addEventListener('click', () => {
   editId = null;
 });
 
-document.getElementById('saveProd').addEventListener('click', () => {
+document.getElementById('saveProd').addEventListener('click', async () => {
   const err = document.getElementById('prodErr');
   err.textContent = '';
   try {
@@ -2911,17 +2998,11 @@ document.getElementById('saveProd').addEventListener('click', () => {
     const rawVideoEmbed = document.getElementById('pVideoEmbed').value.trim();
     const videoEmbed = rawVideoEmbed ? (convertDriveVideoUrl(rawVideoEmbed) || rawVideoEmbed) : '';
 
-    let list = getProds();
     const np = {id:ref, name, cat, sub, price, desc, emoji, image:firstImg, images:[...editImages], badge:selBadge, video:videoEmbed};
 
-    if(editId) {
-      list = list.map(p => p.id === editId ? np : p);
-    } else {
-      if(list.find(p => p.id === ref)) { err.textContent = 'La referencia ya existe'; return; }
-      list.push(np);
-    }
+    if(!editId && getProds().find(p => p.id === ref)) { err.textContent = 'La referencia ya existe'; return; }
 
-    saveProds(list);
+    await upsertProduct(np);
     loadProdAdminList();
     renderAll();
     renderCatPills();
@@ -2973,7 +3054,7 @@ function loadCatAdmin() {
   });
   
   el.querySelectorAll('.cai-acts .bdel').forEach(b => {
-    b.addEventListener('click', () => {
+    b.addEventListener('click', async () => {
       if(!confirm('¿Eliminar esta categoría?')) return;
       try {
         saveCats(getCats().filter(c => c.id !== b.dataset.cid));
@@ -2988,7 +3069,7 @@ function loadCatAdmin() {
   });
   
   el.querySelectorAll('.stx').forEach(x => {
-    x.addEventListener('click', () => {
+    x.addEventListener('click', async () => {
       try {
         const cats = getCats();
         const ci = cats.findIndex(c => c.id === x.dataset.cid);
@@ -3006,7 +3087,7 @@ function loadCatAdmin() {
   });
   
   el.querySelectorAll('.add-sub-btn').forEach(b => {
-    b.addEventListener('click', () => {
+    b.addEventListener('click', async () => {
       const inp = document.getElementById('asi-' + b.dataset.cid);
       const val = inp.value.trim();
       if(!val) return;
@@ -3043,7 +3124,7 @@ function setupCatDrag(item) {
   item.addEventListener('dragend', () => { item.style.opacity = ''; catDragId = null; });
   item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
   item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
-  item.addEventListener('drop', e => {
+  item.addEventListener('drop', async e => {
     e.preventDefault();
     item.classList.remove('drag-over');
     if(!catDragId || catDragId === item.dataset.cid) return;
@@ -3075,7 +3156,7 @@ document.getElementById('cancelNewCat').addEventListener('click', () => {
   document.getElementById('newCatForm').style.display = 'none';
 });
 
-document.getElementById('saveNewCat').addEventListener('click', () => {
+document.getElementById('saveNewCat').addEventListener('click', async () => {
   const err = document.getElementById('catErr');
   err.textContent = '';
   try {
@@ -3162,7 +3243,7 @@ function setupFAQDrag(item) {
   item.addEventListener('dragend', () => { item.style.opacity = ''; faqDragId = null; });
   item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
   item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
-  item.addEventListener('drop', e => {
+  item.addEventListener('drop', async e => {
     e.preventDefault();
     item.classList.remove('drag-over');
     if(!faqDragId || faqDragId === item.dataset.fid) return;
@@ -3195,7 +3276,7 @@ document.getElementById('cancelNewFaq').addEventListener('click', () => {
   document.getElementById('newFaqForm').style.display = 'none';
 });
 
-document.getElementById('saveNewFaq').addEventListener('click', () => {
+document.getElementById('saveNewFaq').addEventListener('click', async () => {
   const err = document.getElementById('faqErr');
   err.textContent = '';
   try {
@@ -3257,12 +3338,12 @@ document.getElementById('coverOpacity').addEventListener('input', function() {
   document.getElementById('opacityVal').textContent = this.value + '%';
 });
 
-document.getElementById('saveCover').addEventListener('click', () => {
+document.getElementById('saveCover').addEventListener('click', async () => {
   try {
     SEC.guard('cambiar portada');
     const src = document.getElementById('coverArea').dataset.img || document.getElementById('coverPreview').src || '';
     const op = document.getElementById('coverOpacity').value;
-    store.merge(APP_K, {cover:src, coverOp:parseInt(op)});
+    await saveApp({cover:src, coverOp:parseInt(op)});
     applyApp();
     toast('✅ Portada guardada');
   } catch(e) {
@@ -3270,12 +3351,13 @@ document.getElementById('saveCover').addEventListener('click', () => {
   }
 });
 
-document.getElementById('clearCover').addEventListener('click', () => {
+document.getElementById('clearCover').addEventListener('click', async () => {
   try {
     SEC.guard('cambiar portada');
     const a = getApp();
     delete a.cover;
-    store.set(APP_K, a);
+    _mem.app=a;
+    await DB.setSetting('appearance',a).catch(()=>{});
     document.getElementById('coverPreview').style.display = 'none';
     const _hbg = document.getElementById('heroBg'); if(_hbg) _hbg.style.backgroundImage = '';
     toast('✅ Portada eliminada');
@@ -3300,37 +3382,37 @@ function renderBannerAdmin() {
     </div>
   `).join('');
   
-  el.querySelectorAll('.btoggle').forEach(b => b.addEventListener('click', () => {
+  el.querySelectorAll('.btoggle').forEach(b => b.addEventListener('click', async () => {
     try {
       SEC.guard('modificar letreros');
       const bns = getBanners();
       bns[b.dataset.idx].on = !bns[b.dataset.idx].on;
-      store.set(BANNER_K, bns);
+      await saveBanners(bns);
       renderBannerAdmin();
     } catch(e) {
       toast(e.message, true);
     }
   }));
   
-  el.querySelectorAll('.bitem-color').forEach(c => c.addEventListener('change', () => {
+  el.querySelectorAll('.bitem-color').forEach(c => c.addEventListener('change', async () => {
     try {
       SEC.guard('modificar letreros');
       const bns = getBanners();
       bns[c.dataset.idx].color = c.value;
-      store.set(BANNER_K, bns);
+      await saveBanners(bns);
     } catch(e) {
       toast(e.message, true);
     }
   }));
   
-  el.querySelectorAll('.bitem .bedit').forEach(b => b.addEventListener('click', () => {
+  el.querySelectorAll('.bitem .bedit').forEach(b => b.addEventListener('click', async () => {
     try {
       SEC.guard('modificar letreros');
       const bns = getBanners();
       const txt = prompt('Texto del letrero:', bns[b.dataset.idx].text);
       if(txt !== null) {
         bns[b.dataset.idx].text = txt;
-        store.set(BANNER_K, bns);
+        await saveBanners(bns);
         renderBannerAdmin();
       }
     } catch(e) {
@@ -3338,12 +3420,12 @@ function renderBannerAdmin() {
     }
   }));
   
-  el.querySelectorAll('.bitem .bdel').forEach(b => b.addEventListener('click', () => {
+  el.querySelectorAll('.bitem .bdel').forEach(b => b.addEventListener('click', async () => {
     try {
       SEC.guard('modificar letreros');
       let bns = getBanners();
       bns.splice(b.dataset.idx, 1);
-      store.set(BANNER_K, bns);
+      await saveBanners(bns);
       renderBannerAdmin();
     } catch(e) {
       toast(e.message, true);
@@ -3358,7 +3440,7 @@ function renderBannerAdmin() {
     item.addEventListener('dragend', () => { item.draggable = false; item.classList.remove('dragging'); bannerDragIdx = null; });
     item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
     item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
-    item.addEventListener('drop', e => {
+    item.addEventListener('drop', async e => {
       e.preventDefault();
       item.classList.remove('drag-over');
       const to = parseInt(item.dataset.idx);
@@ -3368,7 +3450,7 @@ function renderBannerAdmin() {
         const bns = getBanners();
         const [m] = bns.splice(bannerDragIdx, 1);
         bns.splice(to, 0, m);
-        store.set(BANNER_K, bns);
+        await saveBanners(bns);
         renderBannerAdmin();
       } catch(ex) {
         toast(ex.message, true);
@@ -3377,19 +3459,19 @@ function renderBannerAdmin() {
   });
 }
 
-document.getElementById('addBanner').addEventListener('click', () => {
+document.getElementById('addBanner').addEventListener('click', async () => {
   try {
     SEC.guard('agregar letreros');
     const bns = getBanners();
     bns.push({id:uid(), text:'✦ Nuevo letrero', on:true, color:'#e8c97a'});
-    store.set(BANNER_K, bns);
+    await saveBanners(bns);
     renderBannerAdmin();
   } catch(e) {
     toast(e.message, true);
   }
 });
 
-document.getElementById('saveBanners').addEventListener('click', () => {
+document.getElementById('saveBanners').addEventListener('click', async () => {
   try {
     SEC.guard('guardar letreros');
     renderTicker();
@@ -3420,7 +3502,7 @@ function renderStickerAdmin() {
     </div>
   `).join('');
   
-  el.querySelectorAll('.sitem .bedit').forEach(b => b.addEventListener('click', () => {
+  el.querySelectorAll('.sitem .bedit').forEach(b => b.addEventListener('click', async () => {
     try {
       SEC.guard('modificar etiquetas');
       const ss = getStickers();
@@ -3430,7 +3512,7 @@ function renderStickerAdmin() {
       const pos = prompt('Posición (top-left, top-right, bottom-left, bottom-right, center-left):', s.pos) || s.pos;
       const vis = confirm('¿Mostrar en la página?');
       ss[b.dataset.idx] = {...s, text:txt, pos, visible:vis};
-      store.set(STICKER_K, ss);
+      await saveStickers(ss);
       renderStickerAdmin();
       renderStickers();
     } catch(e) {
@@ -3438,12 +3520,12 @@ function renderStickerAdmin() {
     }
   }));
   
-  el.querySelectorAll('.sitem .bdel').forEach(b => b.addEventListener('click', () => {
+  el.querySelectorAll('.sitem .bdel').forEach(b => b.addEventListener('click', async () => {
     try {
       SEC.guard('eliminar etiquetas');
       let ss = getStickers();
       ss.splice(b.dataset.idx, 1);
-      store.set(STICKER_K, ss);
+      await saveStickers(ss);
       renderStickerAdmin();
       renderStickers();
     } catch(e) {
@@ -3452,12 +3534,12 @@ function renderStickerAdmin() {
   }));
 }
 
-document.getElementById('addSticker').addEventListener('click', () => {
+document.getElementById('addSticker').addEventListener('click', async () => {
   try {
     SEC.guard('agregar etiquetas');
     const ss = getStickers();
     ss.push({id:uid(), text:'✨ Texto flotante', pos:'top-left', visible:true});
-    store.set(STICKER_K, ss);
+    await saveStickers(ss);
     renderStickerAdmin();
     renderStickers();
   } catch(e) {
@@ -3465,7 +3547,7 @@ document.getElementById('addSticker').addEventListener('click', () => {
   }
 });
 
-document.getElementById('saveStickers').addEventListener('click', () => {
+document.getElementById('saveStickers').addEventListener('click', async () => {
   try {
     SEC.guard('guardar etiquetas');
     renderStickers();
@@ -3475,10 +3557,10 @@ document.getElementById('saveStickers').addEventListener('click', () => {
   }
 });
 
-document.getElementById('saveTexts').addEventListener('click', () => {
+document.getElementById('saveTexts').addEventListener('click', async () => {
   try {
     SEC.guard('modificar textos');
-    store.merge(APP_K, {
+    await saveApp({
       logoSub: document.getElementById('apLogoSub').value,
       heroTitle: document.getElementById('apHeroT').value,
       heroSub: document.getElementById('apHeroS').value,
@@ -3506,10 +3588,10 @@ document.querySelectorAll('.cpre').forEach(p => p.addEventListener('click', () =
   selScheme = p.dataset.scheme;
 }));
 
-document.getElementById('applyColor').addEventListener('click', () => {
+document.getElementById('applyColor').addEventListener('click', async () => {
   try {
     SEC.guard('cambiar colores');
-    store.merge(APP_K, {scheme:selScheme});
+    await saveApp({scheme:selScheme});
     applyScheme(selScheme);
     toast('✅ Paleta aplicada');
   } catch(e) {
@@ -3517,14 +3599,14 @@ document.getElementById('applyColor').addEventListener('click', () => {
   }
 });
 
-document.querySelectorAll('.fsbtn').forEach(b => b.addEventListener('click', () => {
+document.querySelectorAll('.fsbtn').forEach(b => b.addEventListener('click', async () => {
   try {
     SEC.guard('cambiar tipografía');
     document.querySelectorAll('.fsbtn').forEach(x => x.classList.remove('active'));
     b.classList.add('active');
     const fs = parseFloat(b.dataset.scale);
     document.documentElement.style.setProperty('--fs', fs);
-    store.merge(APP_K, {fs});
+    await saveApp({fs});
     toast('✅ Tamaño aplicado');
   } catch(e) {
     toast(e.message, true);
@@ -3558,9 +3640,9 @@ function loadRevAdmin() {
     </div>
   `).join('');
   
-  el.querySelectorAll('.bdel').forEach(b => b.addEventListener('click', () => {
+  el.querySelectorAll('.bdel').forEach(b => b.addEventListener('click', async () => {
     try {
-      delRev(b.dataset.pid, b.dataset.rid);
+      await delRev(b.dataset.pid, b.dataset.rid);
       loadRevAdmin();
       renderAll();
       toast('✅ Reseña eliminada');
@@ -3654,26 +3736,19 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 document.getElementById('exportBtn').addEventListener('click', async () => {
   try {
     SEC.guard('exportar datos');
-    toast('⏳ Descargando datos...');
-    const [products, categories, reviews, faq, banners, stickers, appearance] = await Promise.all([
-      store.loadFromCloud(PROD_K, getProds()),
-      store.loadFromCloud(CAT_K, getCats()),
-      store.loadFromCloud(REV_K, getRevs()),
-      store.loadFromCloud(FAQ_K, getFAQ()),
-      store.loadFromCloud(BANNER_K, getBanners()),
-      store.loadFromCloud(STICKER_K, getStickers()),
-      store.loadFromCloud(APP_K, getApp())
+    toast('⏳ Descargando datos desde Supabase...');
+    const [prods,cats,revRows,faqs,banners,stickers,settings] = await Promise.all([
+      DB.getProducts(),DB.getCategories(),DB.getReviews(),
+      DB.getFAQ(),DB.getBanners(),DB.getStickers(),DB.getAllSettings()
     ]);
-    const data = { products, categories, reviews, faq, banners, stickers, appearance, exportDate: new Date().toISOString() };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'bisuteriacgomez-backup.json';
+    const data={products:prods,categories:cats,reviews:revRows,faq:faqs,banners,stickers,appearance:settings['appearance']||{},exportDate:new Date().toISOString()};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='bisuteriacgomez-backup.json';
     a.click();
     toast('✅ Datos exportados');
-  } catch(e) {
-    toast(e.message, true);
-  }
+  } catch(e){toast(e.message,true);}
 });
 
 document.getElementById('importFile').addEventListener('change', function() {
@@ -3684,15 +3759,14 @@ document.getElementById('importFile').addEventListener('change', function() {
     try {
       SEC.guard('importar datos');
       const data = JSON.parse(e.target.result);
-      toast('⏳ Importando datos...');
+      toast('⏳ Importando datos en Supabase...');
       const writes = [];
-      if(data.products) writes.push(SB.set(PROD_K, data.products));
-      if(data.categories) writes.push(SB.set(CAT_K, data.categories));
-      if(data.reviews) writes.push(SB.set(REV_K, data.reviews));
-      if(data.banners) writes.push(SB.set(BANNER_K, data.banners));
-      if(data.stickers) writes.push(SB.set(STICKER_K, data.stickers));
-      if(data.faq) writes.push(SB.set(FAQ_K, data.faq));
-      if(data.appearance) writes.push(SB.set(APP_K, data.appearance));
+      if(data.products)   writes.push(...data.products.map(p=>DB.upsertProduct(p)));
+      if(data.categories) writes.push(...data.categories.map((c,i)=>DB.upsertCategory(c,i)));
+      if(data.faq)        writes.push(...(data.faq||[]).map((f,i)=>DB.upsertFAQ(f,i)));
+      if(data.banners)    writes.push(...(data.banners||[]).map((b,i)=>DB.upsertBanner(b,i)));
+      if(data.stickers)   writes.push(...(data.stickers||[]).map(s=>DB.upsertSticker(s)));
+      if(data.appearance) writes.push(DB.setSetting('appearance',data.appearance));
       await Promise.all(writes);
       location.reload();
     } catch(ex) {
@@ -3842,6 +3916,7 @@ document.getElementById('stgl').addEventListener('click', () => {
 });
 
 window.addEventListener('scroll', () => {
+  document.getElementById('stBtn').classList.toggle('visible', scrollY > 300);
 }, {passive: true});
 
 
@@ -3856,23 +3931,8 @@ window.addEventListener('scroll', () => {
   // Mostrar skeleton mientras carga Supabase
   showSkeleton();
 
-  // ── Cargar TODO desde Supabase ──
-  await Promise.all([
-    store.loadFromCloud(PROD_K),
-    store.loadFromCloud(CAT_K),
-    store.loadFromCloud(BANNER_K),
-    store.loadFromCloud(STICKER_K),
-    store.loadFromCloud(FAQ_K),
-    store.loadFromCloud(APP_K),
-    store.loadFromCloud(REV_K)
-  ]);
-
-  // Solo inicializar con defaults si Supabase no tiene nada (primera vez real)
-  if (store.get(PROD_K) === null) store.set(PROD_K, DEF_PRODS);
-  if (store.get(CAT_K) === null) store.set(CAT_K, DEF_CATS);
-  if (store.get(BANNER_K) === null) store.set(BANNER_K, DEF_BANNERS);
-  if (store.get(STICKER_K) === null) store.set(STICKER_K, DEF_STICKERS);
-  if (store.get(FAQ_K) === null) store.set(FAQ_K, DEF_FAQ);
+  // ── Cargar desde tablas reales de Supabase ──
+  await store.loadAll();
 
   applyApp();
   renderTicker();
@@ -3897,7 +3957,7 @@ window.addEventListener('scroll', () => {
 
   const a = getApp();
   const waNum = a.waNum || WA_NUM;
-  ['hdrWa','ftWa','faqWa'].forEach(id => {
+  ['hdrWa','ftWa','fabWa'].forEach(id => {
     const el = document.getElementById(id);
     if(el && !el.href.includes('wa.me')) {
       el.href = `https://wa.me/${waNum}?text=${encodeURIComponent(WA_MESSAGES.catalog())}`;
