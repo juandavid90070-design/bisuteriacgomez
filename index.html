@@ -21,7 +21,7 @@
 
 <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
 <title>Bisutería C. Gómez | Accesorios con Elegancia</title>
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{overflow-x:hidden;max-width:100%}
@@ -45,7 +45,8 @@ body::after{content:'';position:fixed;bottom:-100px;left:-100px;width:320px;heig
 @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* ── FLOATING STICKERS ────────────────────── */
-.float-sticker{position:fixed;z-index:90;pointer-events:none;font-family:'Great Vibes',cursive;font-size:clamp(.9rem,2.5vw,1.4rem);color:var(--g);text-shadow:0 2px 8px rgba(201,160,80,.3);opacity:.75;transition:opacity .3s;padding:6px 14px;border-radius:20px;border:1px solid rgba(201,160,80,.25);background:rgba(255,245,248,.85);backdrop-filter:blur(4px)}
+.float-sticker{position:fixed;z-index:10;pointer-events:none;font-family:'Great Vibes',cursive;font-size:clamp(.8rem,2vw,1.2rem);color:var(--g);text-shadow:0 2px 12px rgba(201,160,80,.2);opacity:0;padding:5px 12px;border-radius:20px;border:1px solid rgba(201,160,80,.18);background:rgba(255,245,248,.5);backdrop-filter:blur(6px);transition:opacity 1.8s ease;will-change:transform,opacity}
+@media(max-width:767px){.float-sticker{font-size:.75rem;padding:4px 9px}}
 
 /* ── HEADER ───────────────────────────────── */
 header{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,245,248,.97);backdrop-filter:blur(14px);border-bottom:1px solid rgba(201,160,80,.22);box-shadow:0 2px 18px rgba(180,73,106,.08)}
@@ -77,39 +78,89 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,245,2
 .mob-sb input:focus{border-color:var(--g)}
 
 /* ── HERO ─────────────────────────────────── */
-.hero{position:relative;overflow:hidden;text-align:center;background:linear-gradient(145deg,#fff5f8 0%,#fce8ef 35%,#f8d8e8 65%,#fce4f0 100%);padding:clamp(48px,9vw,96px) var(--px) clamp(40px,7vw,80px);min-height:clamp(420px,70vw,580px);display:flex;align-items:center;justify-content:center}
-.hero-blob{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none}
-.hero-blob-1{width:380px;height:380px;background:rgba(242,160,190,0.25);top:-100px;right:-80px;animation:blobFloat 7s ease-in-out infinite alternate}
-.hero-blob-2{width:280px;height:280px;background:rgba(201,160,80,0.12);bottom:-60px;left:-60px;animation:blobFloat 9s ease-in-out infinite alternate-reverse}
-.hero-blob-3{width:200px;height:200px;background:rgba(255,180,210,0.3);top:40%;left:5%;animation:blobFloat 6s ease-in-out infinite alternate}
-@keyframes blobFloat{from{transform:translate(0,0) scale(1)}to{transform:translate(15px,20px) scale(1.08)}}
-.hero-dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,rgba(201,160,80,0.18) 1.5px,transparent 1.5px);background-size:28px 28px;opacity:0.5}
-.bg-emojis{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.bge{position:absolute;font-size:1.6rem;opacity:0;user-select:none;will-change:transform}
-.hsticker{position:absolute;pointer-events:none;user-select:none;animation:hstickerFloat linear infinite;filter:drop-shadow(0 2px 8px rgba(180,73,106,0.15))}
-@keyframes hstickerFloat{0%{transform:translateY(0) rotate(var(--r0)) scale(1)}30%{transform:translateY(-12px) rotate(calc(var(--r0) + 6deg)) scale(1.04)}60%{transform:translateY(-6px) rotate(calc(var(--r0) - 4deg)) scale(0.97)}100%{transform:translateY(0) rotate(var(--r0)) scale(1)}}
+.hero{position:relative;overflow:hidden;text-align:center;background:#fff8fb;padding:clamp(56px,10vw,108px) var(--px) clamp(52px,8vw,88px);min-height:clamp(460px,72vw,600px);display:flex;align-items:center;justify-content:center}
+
+/* Soft watercolor wash background */
+.hero::before{content:'';position:absolute;inset:0;background:
+  radial-gradient(ellipse 80% 60% at 20% 30%, rgba(252,228,240,0.7) 0%, transparent 60%),
+  radial-gradient(ellipse 60% 50% at 80% 20%, rgba(255,220,235,0.5) 0%, transparent 55%),
+  radial-gradient(ellipse 70% 80% at 50% 90%, rgba(252,240,248,0.6) 0%, transparent 60%),
+  radial-gradient(ellipse 50% 40% at 85% 70%, rgba(254,235,210,0.35) 0%, transparent 50%);
+  pointer-events:none;z-index:0}
+
+/* Delicate lace pattern overlay */
+.hero::after{content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle, rgba(212,120,154,0.09) 1px, transparent 1px),
+  radial-gradient(circle, rgba(201,160,80,0.07) 1px, transparent 1px);
+  background-size:32px 32px, 16px 16px;
+  background-position:0 0, 8px 8px;
+  pointer-events:none;z-index:0;opacity:0.8}
+
+/* Floating petals */
+.hero-petal{position:absolute;pointer-events:none;opacity:0;animation:petalDrift ease-in-out infinite}
+@keyframes petalDrift{
+  0%{opacity:0;transform:translateY(0) rotate(var(--pr)) scale(0.6)}
+  15%{opacity:0.55}
+  50%{opacity:0.45;transform:translateY(-28px) translateX(var(--pdx)) rotate(calc(var(--pr) + 18deg)) scale(1)}
+  85%{opacity:0.3}
+  100%{opacity:0;transform:translateY(0) rotate(var(--pr)) scale(0.6)}}
+
+.hero-petal svg{width:var(--psz);height:var(--psz)}
+
+/* Sparkle stars */
 .hsparkle{position:absolute;pointer-events:none;animation:hsparkleP ease-in-out infinite}
-@keyframes hsparkleP{0%,100%{opacity:0;transform:scale(0.4) rotate(0deg)}40%,60%{opacity:1;transform:scale(1) rotate(20deg)}}
-.hero-c{position:relative;z-index:10;max-width:560px;width:100%}
-.hero-ey-new{display:inline-flex;align-items:center;gap:10px;font-size:10.5px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:#b5496a;margin-bottom:18px;opacity:0;animation:hriseUp 0.7s ease 0.1s forwards}
-.hey-line{width:28px;height:1.5px;background:linear-gradient(90deg,transparent,#d4789a);border-radius:2px}
-.hey-line-r{transform:scaleX(-1)}
-.hero h1{font-family:'Great Vibes',cursive;font-size:clamp(2.8rem,10vw,5rem);color:#3a1a28;line-height:1.05;margin:0 0 6px;text-shadow:0 2px 20px rgba(180,73,106,0.12);opacity:0;animation:hriseUp 0.9s ease 0.3s forwards}
-.hero-sub-script{font-family:'Cormorant Garamond',serif;font-size:clamp(0.82rem,2.2vw,1rem);font-weight:300;font-style:italic;letter-spacing:0.3em;text-transform:uppercase;color:#c9a050;margin-bottom:18px;opacity:0;animation:hriseUp 0.9s ease 0.45s forwards}
-.gdiv{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 auto 18px;opacity:0;animation:hriseUp 0.8s ease 0.55s forwards}
-.gdiv-line{width:40px;height:1px;background:linear-gradient(90deg,transparent,rgba(201,160,80,0.5),transparent)}
-.hero p#heroSub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.4vw,1.18rem);color:#7a3a54;max-width:400px;margin:0 auto 28px;line-height:1.75;opacity:0;animation:hriseUp 0.9s ease 0.65s forwards}
-.hero-btns-new{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;opacity:0;animation:hriseUp 0.9s ease 0.8s forwards}
-.hbtn-main{padding:13px 30px;background:linear-gradient(135deg,#b5496a 0%,#d4789a 50%,#b5496a 100%);background-size:200%;color:#fff;font-family:'Lato',sans-serif;font-size:11.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;border:none;border-radius:50px;cursor:pointer;box-shadow:0 4px 16px rgba(181,73,106,0.28);transition:all 0.3s ease;text-decoration:none;display:inline-block;animation:hshimmerBtn 3s linear infinite}
-.hbtn-main:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(181,73,106,0.38)}
-@keyframes hshimmerBtn{0%{background-position:0% 50%}100%{background-position:200% 50%}}
-@keyframes btnShimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
-.hbtn-alt{padding:12px 26px;background:rgba(255,255,255,0.7);color:#b5496a;font-family:'Lato',sans-serif;font-size:11.5px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;border:1.5px solid rgba(181,73,106,0.25);border-radius:50px;cursor:pointer;transition:all 0.3s ease;text-decoration:none;display:inline-block}
-.hbtn-alt:hover{border-color:#b5496a;background:rgba(255,255,255,0.9);transform:translateY(-2px)}
-.hero-trust{display:flex;gap:18px;justify-content:center;align-items:center;margin-top:28px;flex-wrap:wrap;opacity:0;animation:hriseUp 0.9s ease 1s forwards}
-.htrust-item{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:400;letter-spacing:0.04em;color:#b87090}
-.htrust-dot{width:5px;height:5px;border-radius:50%;background:#d4789a;flex-shrink:0}
-@keyframes hriseUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes hsparkleP{0%,100%{opacity:0;transform:scale(0.3) rotate(0deg)}45%,55%{opacity:1;transform:scale(1) rotate(25deg)}}
+
+/* Soft corner florals */
+.hero-floral{position:absolute;pointer-events:none;font-size:clamp(2.2rem,5vw,3.8rem);opacity:0.08;animation:floralSway ease-in-out infinite alternate;line-height:1}
+@keyframes floralSway{from{transform:rotate(var(--fr)) scale(1)}to{transform:rotate(calc(var(--fr) + 8deg)) scale(1.04)}}
+.hero-floral.fl1{top:-10px;left:-8px;--fr:-18deg;animation-duration:5s}
+.hero-floral.fl2{top:-10px;right:-8px;--fr:22deg;animation-duration:6.5s;font-size:clamp(1.8rem,4vw,3rem)}
+.hero-floral.fl3{bottom:10px;left:10px;--fr:10deg;animation-duration:7s;font-size:clamp(1.4rem,3vw,2.2rem);opacity:0.06}
+.hero-floral.fl4{bottom:10px;right:10px;--fr:-14deg;animation-duration:5.8s;font-size:clamp(1.6rem,3.5vw,2.6rem);opacity:0.07}
+
+/* Main hero content */
+.hero-c{position:relative;z-index:10;max-width:600px;width:100%;padding:0 8px}
+
+/* Eyebrow pill */
+.hero-ey-new{display:inline-flex;align-items:center;gap:9px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(.75rem,2vw,.9rem);font-weight:400;letter-spacing:0.18em;color:#b5496a;margin-bottom:20px;opacity:0;animation:hriseUp 0.8s cubic-bezier(0.34,1.2,0.64,1) 0.1s forwards;background:rgba(255,255,255,0.75);border:1px solid rgba(181,73,106,0.2);border-radius:50px;padding:6px 18px;backdrop-filter:blur(6px)}
+.hey-gem{width:5px;height:5px;background:linear-gradient(135deg,#d4789a,#c9a050);border-radius:50%;flex-shrink:0;box-shadow:0 0 6px rgba(212,120,154,0.5)}
+
+/* Main heading */
+.hero h1{font-family:'Great Vibes',cursive;font-size:clamp(3rem,11vw,5.6rem);color:#3a1a28;line-height:1.02;margin:0 0 4px;letter-spacing:0.01em;opacity:0;animation:hriseUp 1s cubic-bezier(0.34,1.1,0.64,1) 0.28s forwards}
+
+/* Decorative divider */
+.hero-divider{display:flex;align-items:center;justify-content:center;gap:12px;margin:8px auto 14px;opacity:0;animation:hriseUp 0.8s ease 0.48s forwards}
+.hdiv-line{flex:1;max-width:60px;height:1px;background:linear-gradient(90deg,transparent,rgba(201,160,80,0.5))}
+.hdiv-line.r{background:linear-gradient(90deg,rgba(201,160,80,0.5),transparent)}
+.hdiv-diamond{width:7px;height:7px;background:var(--g);transform:rotate(45deg);border-radius:1px;flex-shrink:0;box-shadow:0 0 8px rgba(201,160,80,0.4)}
+.hdiv-dot{width:4px;height:4px;border-radius:50%;background:rgba(201,160,80,0.6);flex-shrink:0}
+
+/* Italic subtitle */
+.hero-sub-script{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(.82rem,2vw,.98rem);letter-spacing:0.28em;text-transform:uppercase;color:#c9a050;margin-bottom:20px;opacity:0;animation:hriseUp 0.9s ease 0.56s forwards}
+
+/* Description */
+.hero p#heroSub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.05rem,2.5vw,1.22rem);font-weight:300;color:#7a3a54;max-width:420px;margin:0 auto 32px;line-height:1.8;opacity:0;animation:hriseUp 0.9s ease 0.68s forwards}
+
+/* CTA button */
+.hero-btns-new{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;opacity:0;animation:hriseUp 0.9s ease 0.82s forwards}
+.hbtn-main{position:relative;overflow:hidden;padding:14px 34px;background:linear-gradient(135deg,#b5496a,#c9617e,#d4789a);color:#fff;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.4vw,1.12rem);font-weight:600;letter-spacing:0.12em;border:none;border-radius:50px;cursor:pointer;box-shadow:0 6px 24px rgba(181,73,106,0.3),0 2px 8px rgba(181,73,106,0.15);transition:all 0.35s cubic-bezier(0.34,1.2,0.64,1);text-decoration:none;display:inline-block}
+.hbtn-main::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent 50%);border-radius:inherit;pointer-events:none}
+.hbtn-main::after{content:'';position:absolute;top:50%;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);transform:translateY(-50%) skewX(-20deg);animation:btnShimmer 2.8s ease-in-out infinite}
+@keyframes btnShimmer{0%,70%{left:-60%}100%{left:160%}}
+.hbtn-main:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 12px 32px rgba(181,73,106,0.38),0 4px 12px rgba(181,73,106,0.2)}
+.hbtn-alt{padding:13px 28px;background:rgba(255,255,255,0.8);color:#b5496a;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.4vw,1.12rem);font-weight:400;letter-spacing:0.1em;border:1.5px solid rgba(181,73,106,0.3);border-radius:50px;cursor:pointer;transition:all 0.3s ease;text-decoration:none;display:inline-block;backdrop-filter:blur(4px)}
+.hbtn-alt:hover{border-color:#b5496a;background:rgba(255,255,255,0.96);transform:translateY(-2px)}
+
+/* Trust badges */
+.hero-trust{display:flex;gap:20px;justify-content:center;align-items:center;margin-top:32px;flex-wrap:wrap;opacity:0;animation:hriseUp 0.9s ease 1s forwards}
+.htrust-item{display:flex;align-items:center;gap:7px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(.82rem,2vw,.94rem);color:#c08098;background:rgba(255,255,255,0.6);border:1px solid rgba(212,120,154,0.2);border-radius:50px;padding:5px 14px;backdrop-filter:blur(4px)}
+.htrust-icon{font-size:.9rem;line-height:1}
+
+/* Animations */
+@keyframes hriseUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* Divider / decorative lines */
 .gdiv{display:flex;align-items:center;justify-content:center;gap:12px;margin:20px auto 0}
 .gdiv span{display:inline-block;width:clamp(28px,5vw,60px);height:1px;background:linear-gradient(90deg,transparent,var(--g))}
 .gdiv span:last-child{background:linear-gradient(90deg,var(--g),transparent)}
@@ -117,6 +168,23 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,245,2
 .hrose{font-size:3rem;opacity:.14;position:absolute;pointer-events:none}
 .hrose.r1{top:8%;left:3%;transform:rotate(-20deg);font-size:clamp(1.8rem,4vw,3.2rem)}
 .hrose.r2{bottom:8%;right:3%;transform:rotate(15deg);font-size:clamp(1.6rem,3.5vw,2.8rem)}
+
+/* Old sticker/blob refs kept for compatibility */
+.hero-blob{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
+.hero-blob-1{width:340px;height:340px;background:rgba(242,160,190,0.18);top:-80px;right:-60px;animation:blobFloat 8s ease-in-out infinite alternate}
+.hero-blob-2{width:240px;height:240px;background:rgba(201,160,80,0.1);bottom:-50px;left:-50px;animation:blobFloat 10s ease-in-out infinite alternate-reverse}
+.hero-blob-3{width:180px;height:180px;background:rgba(255,190,220,0.2);top:35%;left:3%;animation:blobFloat 7s ease-in-out infinite alternate}
+@keyframes blobFloat{from{transform:translate(0,0) scale(1)}to{transform:translate(12px,16px) scale(1.06)}}
+.hero-dots{display:none}
+.bg-emojis{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bge{position:absolute;font-size:1.6rem;opacity:0;user-select:none;will-change:transform}
+.hsticker{position:absolute;pointer-events:none;user-select:none;animation:hstickerFloat linear infinite;filter:drop-shadow(0 2px 8px rgba(180,73,106,0.12));opacity:0.55}
+@keyframes hstickerFloat{0%{transform:translateY(0) rotate(var(--r0)) scale(1)}30%{transform:translateY(-10px) rotate(calc(var(--r0) + 5deg)) scale(1.03)}60%{transform:translateY(-5px) rotate(calc(var(--r0) - 3deg)) scale(0.98)}100%{transform:translateY(0) rotate(var(--r0)) scale(1)}}
+@keyframes hshimmerBtn{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes btnShimmer2{0%,70%{left:-60%}100%{left:160%}}
+.hey-line{width:22px;height:1px;background:rgba(181,73,106,0.35);border-radius:2px}
+.hey-line-r{transform:scaleX(-1)}
+.gdiv-line{width:40px;height:1px;background:linear-gradient(90deg,transparent,rgba(201,160,80,0.5),transparent)}
 
 /* ── CATEGORIES ───────────────────────────── */
 .cats-sec{max-width:var(--mw);margin:0 auto;padding:clamp(26px,5vw,44px) var(--px) 0}
@@ -694,42 +762,60 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <div class="hero-blob hero-blob-1"></div>
   <div class="hero-blob hero-blob-2"></div>
   <div class="hero-blob hero-blob-3"></div>
-  <div class="hero-bg" id="heroBg" style="position:absolute;inset:0;background-size:cover;background-position:center;opacity:0.25;z-index:1"></div>
-  <div class="hero-dots"></div>
+  <div class="hero-bg" id="heroBg" style="position:absolute;inset:0;background-size:cover;background-position:center;opacity:0.18;z-index:1"></div>
 
-  <div class="hsticker" style="top:8%;left:4%;--r0:-12deg;animation-duration:4.2s;animation-delay:0s;font-size:2.2rem">🍓</div>
-  <div class="hsticker" style="top:14%;right:6%;--r0:10deg;animation-duration:5s;animation-delay:0.5s;font-size:2.4rem">💅</div>
-  <div class="hsticker" style="top:52%;left:2%;--r0:-8deg;animation-duration:4.7s;animation-delay:1s;font-size:1.8rem">✨</div>
-  <div class="hsticker" style="top:68%;right:4%;--r0:15deg;animation-duration:5.5s;animation-delay:0.3s;font-size:2rem">🌸</div>
-  <div class="hsticker" style="top:38%;right:2%;--r0:-6deg;animation-duration:4s;animation-delay:0.8s;font-size:1.6rem">⭐</div>
-  <div class="hsticker" style="top:78%;left:7%;--r0:8deg;animation-duration:6s;animation-delay:1.5s;font-size:1.9rem">🍓</div>
-  <div class="hsticker" style="top:25%;left:9%;--r0:-15deg;animation-duration:4.5s;animation-delay:2s;font-size:1.5rem">💖</div>
-  <div class="hsticker" style="top:82%;right:8%;--r0:12deg;animation-duration:5.2s;animation-delay:0.6s;font-size:1.7rem">🌺</div>
-  <div class="hsticker" style="top:6%;left:38%;--r0:-4deg;animation-duration:3.8s;animation-delay:1.2s;font-size:1.4rem">💫</div>
-  <div class="hsticker" style="top:88%;left:40%;--r0:6deg;animation-duration:4.8s;animation-delay:2.5s;font-size:1.5rem">🌷</div>
-  <div class="hsticker" style="top:45%;left:88%;--r0:-10deg;animation-duration:5.8s;animation-delay:0.2s;font-size:1.6rem">💕</div>
-  <div class="hsticker" style="top:60%;left:3%;--r0:14deg;animation-duration:4.3s;animation-delay:1.8s;font-size:1.4rem">⭐</div>
+  <!-- Elegant corner florals -->
+  <div class="hero-floral fl1">🌸</div>
+  <div class="hero-floral fl2">🌷</div>
+  <div class="hero-floral fl3">✿</div>
+  <div class="hero-floral fl4">🌸</div>
 
-  <div class="hsparkle" style="top:30%;left:18%;animation-duration:2.4s;animation-delay:0.4s"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 0 L10.2 7.8 L18 9 L10.2 10.2 L9 18 L7.8 10.2 L0 9 L7.8 7.8 Z" fill="rgba(201,160,80,0.7)"/></svg></div>
-  <div class="hsparkle" style="top:65%;right:15%;animation-duration:3s;animation-delay:1.3s"><svg width="14" height="14" viewBox="0 0 18 18"><path d="M9 0 L10.2 7.8 L18 9 L10.2 10.2 L9 18 L7.8 10.2 L0 9 L7.8 7.8 Z" fill="rgba(212,120,154,0.6)"/></svg></div>
-  <div class="hsparkle" style="top:20%;right:22%;animation-duration:2.8s;animation-delay:2s"><svg width="12" height="12" viewBox="0 0 18 18"><path d="M9 0 L10.2 7.8 L18 9 L10.2 10.2 L9 18 L7.8 10.2 L0 9 L7.8 7.8 Z" fill="rgba(201,160,80,0.55)"/></svg></div>
-  <div class="hsparkle" style="top:75%;left:25%;animation-duration:2.2s;animation-delay:0.8s"><svg width="10" height="10" viewBox="0 0 18 18"><path d="M9 0 L10.2 7.8 L18 9 L10.2 10.2 L9 18 L7.8 10.2 L0 9 L7.8 7.8 Z" fill="rgba(180,73,106,0.5)"/></svg></div>
+  <!-- Animated floating petals (JS populated) -->
+  <div id="heroPetals"></div>
+
+  <!-- Sparkle stars -->
+  <div class="hsparkle" style="top:22%;left:14%;animation-duration:2.6s;animation-delay:0.3s"><svg width="14" height="14" viewBox="0 0 18 18"><path d="M9 0 L10.2 7.8 L18 9 L10.2 10.2 L9 18 L7.8 10.2 L0 9 L7.8 7.8 Z" fill="rgba(201,160,80,0.65)"/></svg></div>
+  <div class="hsparkle" style="top:18%;right:16%;animation-duration:3.2s;animation-delay:1.1s"><svg width="10" height="10" viewBox="0 0 18 18"><path d="M9 0 L10.2 7.8 L18 9 L10.2 10.2 L9 18 L7.8 10.2 L0 9 L7.8 7.8 Z" fill="rgba(212,120,154,0.55)"/></svg></div>
+  <div class="hsparkle" style="top:62%;left:10%;animation-duration:2.2s;animation-delay:0.7s"><svg width="12" height="12" viewBox="0 0 18 18"><path d="M9 0 L10.2 7.8 L18 9 L10.2 10.2 L9 18 L7.8 10.2 L0 9 L7.8 7.8 Z" fill="rgba(201,160,80,0.5)"/></svg></div>
+  <div class="hsparkle" style="top:70%;right:12%;animation-duration:2.8s;animation-delay:1.8s"><svg width="11" height="11" viewBox="0 0 18 18"><path d="M9 0 L10.2 7.8 L18 9 L10.2 10.2 L9 18 L7.8 10.2 L0 9 L7.8 7.8 Z" fill="rgba(180,73,106,0.45)"/></svg></div>
+  <div class="hsparkle" style="top:38%;left:7%;animation-duration:3.5s;animation-delay:2.2s"><svg width="9" height="9" viewBox="0 0 18 18"><path d="M9 0 L10.2 7.8 L18 9 L10.2 10.2 L9 18 L7.8 10.2 L0 9 L7.8 7.8 Z" fill="rgba(212,120,154,0.6)"/></svg></div>
+  <div class="hsparkle" style="top:45%;right:7%;animation-duration:2.4s;animation-delay:0.5s"><svg width="10" height="10" viewBox="0 0 18 18"><path d="M9 0 L10.2 7.8 L18 9 L10.2 10.2 L9 18 L7.8 10.2 L0 9 L7.8 7.8 Z" fill="rgba(201,160,80,0.55)"/></svg></div>
 
   <div class="hero-c">
+    <!-- Eyebrow pill -->
     <div class="hero-ey-new">
-      <div class="hey-line"></div>
+      <div class="hey-gem"></div>
       Colección Exclusiva 2026
-      <div class="hey-line hey-line-r"></div>
+      <div class="hey-gem"></div>
     </div>
+
+    <!-- Main title -->
     <h1 id="heroTitle">Brilla con cada detalle</h1>
-    <p class="hero-sub-script">Bisutería · Elegancia · Arte</p>
-    <p id="heroSub">Piezas únicas pensadas para la mujer que ama verse bella y elegante en cada momento especial.</p>
-    <div class="hero-btns-new">
-      <button class="hbtn-main" onclick="document.getElementById('catPills').scrollIntoView({behavior:'smooth',block:'start'})">Ver colección</button>
+
+    <!-- Decorative divider -->
+    <div class="hero-divider">
+      <div class="hdiv-line"></div>
+      <div class="hdiv-dot"></div>
+      <div class="hdiv-diamond"></div>
+      <div class="hdiv-dot"></div>
+      <div class="hdiv-line r"></div>
     </div>
+
+    <!-- Subtitle -->
+    <p class="hero-sub-script">Bisutería · Elegancia · Arte</p>
+
+    <!-- Description -->
+    <p id="heroSub">Piezas únicas pensadas para la mujer que ama verse bella y elegante en cada momento especial.</p>
+
+    <!-- CTA -->
+    <div class="hero-btns-new">
+      <button class="hbtn-main" onclick="document.getElementById('catPills').scrollIntoView({behavior:'smooth',block:'start'})">Ver colección ✦</button>
+    </div>
+
+    <!-- Trust badges -->
     <div class="hero-trust">
-      <div class="htrust-item"><div class="htrust-dot"></div>Garantía en todos nuestros productos</div>
-      <div class="htrust-item"><div class="htrust-dot"></div>Atención personalizada</div>
+      <div class="htrust-item"><span class="htrust-icon">🔒</span> Compra segura</div>
+      <div class="htrust-item"><span class="htrust-icon">💌</span> Atención personalizada</div>
     </div>
   </div>
 </section>
@@ -777,9 +863,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <div class="flogo">Bisutería C. Gómez</div>
   <div class="ftag">Accesorios con Elegancia</div>
   <div class="trust-badges">
-    <div class="trust-item">🔒 Compra 100% Segura</div>
-    <div class="trust-item">📦 Envío Garantizado</div>
-    <div class="trust-item">⭐ +500 Clientes Felices</div>
+  
   </div>
   <div class="flinks">
     <a href="#">Inicio</a><a href="#">Catálogo</a>
@@ -1746,19 +1830,74 @@ function renderTicker() {
 function renderStickers() {
   const cont = document.getElementById('stickersContainer');
   cont.innerHTML = '';
-  getStickers().filter(s => s.visible).forEach(s => {
+  const visible = getStickers().filter(s => s.visible);
+  if (!visible.length) return;
+
+  // Safe zones: narrow strips on the left and right edges, away from center content
+  // Each zone: {side:'left'|'right', topMin, topMax} in vh units
+  const zones = [
+    {side:'left',  topMin:10, topMax:22},
+    {side:'right', topMin:10, topMax:22},
+    {side:'left',  topMin:24, topMax:38},
+    {side:'right', topMin:24, topMax:38},
+    {side:'left',  topMin:40, topMax:52},
+    {side:'right', topMin:40, topMax:52},
+  ];
+
+  visible.forEach((s, i) => {
     const el = document.createElement('div');
     el.className = 'float-sticker';
     el.textContent = s.text;
-    const posMap = {
-      'top-left':'top:90px;left:8px',
-      'top-right':'top:90px;right:8px',
-      'bottom-left':'bottom:200px;left:8px',
-      'bottom-right':'bottom:200px;right:8px',
-      'center-left':'top:50%;left:8px;transform:translateY(-50%)',
-    };
-    el.style.cssText = posMap[s.pos] || posMap['top-left'];
     cont.appendChild(el);
+
+    let zoneIdx = i % zones.length;
+    let animFrame;
+
+    function pickPosition() {
+      const z = zones[zoneIdx];
+      const top = z.topMin + Math.random() * (z.topMax - z.topMin);
+      const edgeOffset = 4 + Math.random() * 10;
+      if (z.side === 'left') {
+        el.style.left = edgeOffset + 'px';
+        el.style.right = 'auto';
+      } else {
+        el.style.right = edgeOffset + 'px';
+        el.style.left = 'auto';
+      }
+      el.style.top = top + 'vh';
+    }
+
+    function animate() {
+      zoneIdx = (zoneIdx + 2 + Math.floor(Math.random() * 3)) % zones.length;
+      pickPosition();
+
+      const duration = 6000 + Math.random() * 5000;
+      const drift = (Math.random() - 0.5) * 14;
+      const startTime = performance.now();
+
+      requestAnimationFrame(() => {
+        el.style.opacity = '0';
+        requestAnimationFrame(() => {
+          el.style.transition = 'opacity 1.8s ease';
+          el.style.opacity = '0.6';
+        });
+      });
+
+      animFrame = requestAnimationFrame(function tick(now) {
+        const p = Math.min((now - startTime) / duration, 1);
+        const y = drift * Math.sin(p * Math.PI);
+        el.style.transform = `translateY(${y}px)`;
+        if (p < 1) {
+          animFrame = requestAnimationFrame(tick);
+        } else {
+          el.style.transition = 'opacity 1.6s ease';
+          el.style.opacity = '0';
+          setTimeout(animate, 1800 + Math.random() * 1200);
+        }
+      });
+    }
+
+    setTimeout(animate, i * 1400 + Math.random() * 800);
   });
 }
 
@@ -4026,6 +4165,44 @@ window.addEventListener('scroll', () => {
   for (let i = 0; i < total; i++) {
     setTimeout(() => createEmoji(), i * 600);
   }
+})();
+
+// ═══════════════════════════════════════════════════
+// HERO PETALS ANIMATION
+// ═══════════════════════════════════════════════════
+(function(){
+  const cont = document.getElementById('heroPetals');
+  if(!cont) return;
+  const petalSVGs = [
+    // soft petal 1
+    `<svg viewBox="0 0 28 28" fill="none"><ellipse cx="14" cy="14" rx="7" ry="12" fill="rgba(212,120,154,0.55)" transform="rotate(-20 14 14)"/></svg>`,
+    // soft petal 2
+    `<svg viewBox="0 0 28 28" fill="none"><ellipse cx="14" cy="14" rx="6" ry="11" fill="rgba(252,200,220,0.6)" transform="rotate(15 14 14)"/></svg>`,
+    // gold petal
+    `<svg viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="12" rx="5" ry="10" fill="rgba(201,160,80,0.4)" transform="rotate(10 12 12)"/></svg>`,
+    // small flower
+    `<svg viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="4" fill="rgba(212,120,154,0.45)"/><ellipse cx="11" cy="5" rx="3" ry="5" fill="rgba(252,210,225,0.5)"/><ellipse cx="11" cy="17" rx="3" ry="5" fill="rgba(252,210,225,0.5)"/><ellipse cx="5" cy="11" rx="5" ry="3" fill="rgba(252,210,225,0.5)"/><ellipse cx="17" cy="11" rx="5" ry="3" fill="rgba(252,210,225,0.5)"/></svg>`,
+  ];
+  const positions = [
+    {top:'12%',left:'8%'},{top:'20%',right:'10%'},{top:'55%',left:'5%'},
+    {top:'65%',right:'8%'},{top:'35%',left:'3%'},{top:'42%',right:'4%'},
+    {top:'75%',left:'12%'},{top:'28%',right:'5%'},{top:'80%',right:'14%'},
+    {top:'15%',left:'18%'}
+  ];
+  positions.forEach((pos, i) => {
+    const el = document.createElement('div');
+    el.className = 'hero-petal';
+    const size = 18 + Math.random() * 16;
+    el.style.cssText = Object.entries(pos).map(([k,v])=>`${k}:${v}`).join(';');
+    el.style.setProperty('--pr', (Math.random()-0.5)*40 + 'deg');
+    el.style.setProperty('--pdx', ((Math.random()-0.5)*20) + 'px');
+    el.style.setProperty('--psz', size + 'px');
+    const dur = 5 + Math.random() * 6;
+    el.style.animationDuration = dur + 's';
+    el.style.animationDelay = (i * 0.5 + Math.random()) + 's';
+    el.innerHTML = petalSVGs[i % petalSVGs.length];
+    cont.appendChild(el);
+  });
 })();
 
 </script>
