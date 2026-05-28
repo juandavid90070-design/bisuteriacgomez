@@ -807,7 +807,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
     <p class="hero-sub-script">Bisutería · Elegancia · Arte</p>
 
     <!-- Description -->
-    <p id="heroSub">Piezas únicas pensadas para la mujer que ama verse bella y elegante en cada momento especial.</p>
+    <p id="heroSub">Piezas **únicas** pensadas para la mujer que ama verse **bella y elegante** en cada momento especial.</p>
 
     <!-- CTA -->
     <div class="hero-btns-new">
@@ -1830,7 +1830,10 @@ function applyApp() {
   const a = getApp();
   if(a.logoSub) document.getElementById('logoSubTxt').textContent = a.logoSub;
   if(a.heroTitle) document.getElementById('heroTitle').textContent = a.heroTitle;
-  if(a.heroSub) document.getElementById('heroSub').textContent = a.heroSub;
+  if(a.heroSub) {
+    const el = document.getElementById('heroSub');
+    el.innerHTML = a.heroSub.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  }
   if(a.fs) document.documentElement.style.setProperty('--fs', a.fs);
   if(a.scheme) applyScheme(a.scheme);
   if(a.cover) {
@@ -4018,6 +4021,12 @@ window.addEventListener('scroll', () => {
   renderSubPills();
   renderAll();
   CART.updateCount();
+
+  // Renderizar negrilla en heroSub por defecto (si no viene de Supabase)
+  const heroSubEl = document.getElementById('heroSub');
+  if(heroSubEl && heroSubEl.textContent.includes('**')) {
+    heroSubEl.innerHTML = heroSubEl.textContent.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  }
   
   // ── Deep link: abrir producto compartido ──
   const _urlParams = new URLSearchParams(location.search);
