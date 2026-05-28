@@ -1215,7 +1215,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
             <h4>📝 Textos editables</h4>
             <div class="frow2"><label class="alabel">Subtítulo del logo</label><input class="ainput" id="apLogoSub" placeholder="Accesorios con Elegancia"/></div>
             <div class="frow2"><label class="alabel">Título principal (Hero)</label><input class="ainput" id="apHeroT" placeholder="Brilla con cada detalle"/></div>
-            <div class="frow2"><label class="alabel">Descripción del Hero</label><textarea class="ata" id="apHeroS" rows="2" placeholder="Descripción de la tienda…"></textarea></div>
+            <div class="frow2"><label class="alabel">Descripción del Hero</label><textarea class="ata" id="apHeroS" rows="2" placeholder="Descripción de la tienda…"></textarea><small style="color:rgba(201,160,80,.6);font-size:.72rem;margin-top:4px;display:block">Usa <b style="color:#c9a050">**palabra**</b> para resaltar con píldora rosada</small></div>
             <div class="frow2"><label class="alabel">Número WhatsApp</label><input class="ainput" id="apWa" placeholder="573006200583"/></div>
             <button class="btn-primary" id="saveTexts">💾 Guardar textos</button>
           </div>
@@ -3364,7 +3364,7 @@ function loadDesignForm() {
   const a = getApp();
   document.getElementById('apLogoSub').value = a.logoSub || '';
   document.getElementById('apHeroT').value = a.heroTitle || '';
-  document.getElementById('apHeroS').value = a.heroSub || '';
+  document.getElementById('apHeroS').value = a.heroSub || 'Piezas **únicas** pensadas para la mujer que ama verse **bella y elegante** en cada momento especial.';
   document.getElementById('apWa').value = a.waNum || WA_NUM;
   if(a.cover) {
     document.getElementById('coverPreview').src = a.cover;
