@@ -1608,22 +1608,19 @@ const SB = {
     return rows.length ? rows[0].value : null;
   },
 
-  // ESCRITURA — va al servidor Vercel con token de admin (service_role key nunca sale del servidor)
+  // ESCRITURA — directo a Supabase con anon key
   async set(key, value) {
-    const token = getAdminToken();
-    if (!token) {
-      console.error('SB.set: no hay token de admin. Solo el panel autenticado puede escribir.');
-      return;
-    }
-    const res = await fetch('/api/admin', {
+    const res = await fetch(`${SB_URL}/rest/v1/store`, {
       method: 'POST',
       headers: {
+        apikey: SB_KEY,
+        Authorization: `Bearer ${SB_KEY}`,
         'Content-Type': 'application/json',
-        'x-admin-token': token
+        Prefer: 'resolution=merge-duplicates'
       },
-      body: JSON.stringify({ action: 'set', key, value })
+      body: JSON.stringify({ key, value, updated_at: new Date().toISOString() })
     });
-    if (!res.ok) console.error('SB.set error:', res.status, await res.text(), key);
+    if (!res.ok) console.error('SB.set error:', res.status, res.statusText, key);
     try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
   }
 };
