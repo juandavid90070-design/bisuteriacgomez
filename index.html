@@ -1473,7 +1473,9 @@ const SEC = {
     if(input === stored) {
       localStorage.removeItem(this.AK);
       localStorage.removeItem(this.LK);
-      sessionStorage.setItem(this.SK, this.tok());
+      const tok = this.tok();
+      sessionStorage.setItem(this.SK, tok);
+      setAdminToken(tok); // token en memoria — habilita escrituras en Supabase vía API
       this.lastActivity = Date.now();
       return true;
     }
@@ -1488,7 +1490,7 @@ const SEC = {
   },
   
   isAuth() { return !!sessionStorage.getItem(this.SK); },
-  logout() { sessionStorage.removeItem(this.SK); },
+  logout() { sessionStorage.removeItem(this.SK); setAdminToken(null); },
   
   guard(a) {
     if(!this.isAuth()) throw new Error('Acceso denegado. Solo ADMIN puede '+a);
@@ -1586,9 +1588,16 @@ const AUTO_BACKUP = {
 // SUPABASE CONFIG
 // ═══════════════════════════════════════════════════
 const SB_URL = 'https://mbxqxyuogxzujyaqnncw.supabase.co';
+// ⚠️ Esta es la anon key — solo para LECTURA pública (catálogo, reseñas, FAQ)
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ieHF4eXVvZ3h6dWp5YXFubmN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NDg0NzAsImV4cCI6MjA5NDUyNDQ3MH0.eXviIBqkvmDje6hxVEONtGPeUq5vQLbzlhwaxqzAOKQ';
 
+// Token de admin generado al hacer login — se usa para llamadas de escritura
+let _adminToken = null;
+function setAdminToken(t) { _adminToken = t; }
+function getAdminToken() { return _adminToken; }
+
 const SB = {
+  // LECTURA — usa anon key, disponible para todos
   async get(key) {
     const res = await fetch(`${SB_URL}/rest/v1/store?key=eq.${encodeURIComponent(key)}&select=value`, {
       headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
@@ -1597,18 +1606,23 @@ const SB = {
     const rows = await res.json();
     return rows.length ? rows[0].value : null;
   },
+
+  // ESCRITURA — va al servidor Vercel con token de admin (service_role key nunca sale del servidor)
   async set(key, value) {
-    const res = await fetch(`${SB_URL}/rest/v1/store`, {
+    const token = getAdminToken();
+    if (!token) {
+      console.error('SB.set: no hay token de admin. Solo el panel autenticado puede escribir.');
+      return;
+    }
+    const res = await fetch('/api/admin', {
       method: 'POST',
       headers: {
-        apikey: SB_KEY,
-        Authorization: `Bearer ${SB_KEY}`,
         'Content-Type': 'application/json',
-        Prefer: 'resolution=merge-duplicates'
+        'x-admin-token': token
       },
-      body: JSON.stringify({ key, value, updated_at: new Date().toISOString() })
+      body: JSON.stringify({ action: 'set', key, value })
     });
-    if (!res.ok) console.error('SB.set error:', res.status, res.statusText, key);
+    if (!res.ok) console.error('SB.set error:', res.status, await res.text(), key);
     try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
   }
 };
