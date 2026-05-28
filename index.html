@@ -45,8 +45,10 @@ body::after{content:'';position:fixed;bottom:-100px;left:-100px;width:320px;heig
 @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* ── FLOATING STICKERS ────────────────────── */
-.float-sticker{position:fixed;z-index:10;pointer-events:none;font-family:'Great Vibes',cursive;font-size:clamp(.8rem,2vw,1.2rem);color:var(--g);text-shadow:0 2px 12px rgba(201,160,80,.2);opacity:0;padding:5px 12px;border-radius:20px;border:1px solid rgba(201,160,80,.18);background:rgba(255,245,248,.5);backdrop-filter:blur(6px);transition:opacity 1.8s ease;will-change:transform,opacity}
-@media(max-width:767px){.float-sticker{font-size:.75rem;padding:4px 9px}}
+.float-sticker{position:fixed;z-index:10;pointer-events:none;font-family:'Great Vibes',cursive;font-size:clamp(.85rem,2vw,1.2rem);color:var(--g);text-shadow:0 2px 12px rgba(201,160,80,.2);opacity:0.7;padding:5px 12px;border-radius:20px;border:1px solid rgba(201,160,80,.18);background:rgba(255,245,248,.55);backdrop-filter:blur(6px)}
+.float-sticker.pos-left{left:10px;top:38vh;transform:rotate(-12deg)}
+.float-sticker.pos-right{right:10px;top:52vh;transform:rotate(12deg)}
+@media(max-width:767px){.float-sticker{font-size:.75rem;padding:4px 9px}.float-sticker.pos-left{top:32vh}.float-sticker.pos-right{top:48vh}}
 
 /* ── HEADER ───────────────────────────────── */
 header{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,245,248,.97);backdrop-filter:blur(14px);border-bottom:1px solid rgba(201,160,80,.22);box-shadow:0 2px 18px rgba(180,73,106,.08)}
@@ -1290,7 +1292,9 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
           <div class="asec">
             <h4>🔒 Seguridad activa</h4>
             <p style="font-family:'Lato',sans-serif;font-size:.76rem;color:rgba(255,255,255,.32);line-height:1.8">
-              ✅ SHA-256 para contraseñas · ✅ Token por sesión<br>
+              ✅ SHA-256 + Salt único · ✅ Token por sesión<br>
+              ✅ Bloqueo 5min tras 3 intentos · ✅ Sesión expira en 15min<br>
+              ✅ Contraseña: 8+ chars, mayúscula, número, símbolo
               ✅ Timeout 30 min · ✅ Sanitización XSS<br>
               ✅ Backup automático · ✅ Validación de inputs
             </p>
@@ -1416,8 +1420,8 @@ const IMG_COMPRESS = {
 // SECURITY MODULE
 // ═══════════════════════════════════════════════════
 const SEC = {
-  PK:'bcg_pw', SK:'bcg_sess', AK:'bcg_att', LK:'bcg_lock',
-  SESSION_TIMEOUT: 30 * 60 * 1000, // 30 minutos
+  PK:'bcg_pw', SK:'bcg_sess', AK:'bcg_att', LK:'bcg_lock', SLT:'bcg_slt',
+  SESSION_TIMEOUT: 15 * 60 * 1000, // 15 minutos
   lastActivity: Date.now(),
   
   async sha(s) {
@@ -1425,15 +1429,34 @@ const SEC = {
     const h = await crypto.subtle.digest('SHA-256', b);
     return Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2,'0')).join('');
   },
+
+  async hashPw(pw) {
+    // SHA-256 con salt único para evitar rainbow tables
+    let salt = localStorage.getItem(this.SLT);
+    if (!salt) {
+      salt = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+        .map(b => b.toString(16).padStart(2,'0')).join('');
+      localStorage.setItem(this.SLT, salt);
+    }
+    return await this.sha(salt + pw + salt);
+  },
   
   tok() {
     return Array.from(crypto.getRandomValues(new Uint8Array(32)))
       .map(b => b.toString(16).padStart(2,'0')).join('');
   },
+
+  validatePwStrength(pw) {
+    if (pw.length < 8) return 'Mínimo 8 caracteres';
+    if (!/[A-Z]/.test(pw)) return 'Debe tener al menos una mayúscula';
+    if (!/[0-9]/.test(pw)) return 'Debe tener al menos un número';
+    if (!/[^A-Za-z0-9]/.test(pw)) return 'Debe tener al menos un símbolo (!@#$%...)';
+    return null;
+  },
   
   async init() {
     if(!localStorage.getItem(this.PK)) {
-      localStorage.setItem(this.PK, await this.sha('CGomez2025'));
+      localStorage.setItem(this.PK, await this.hashPw('CGomez2026.'));
     }
     this.trackActivity();
     this.checkTimeout();
@@ -1443,9 +1466,10 @@ const SEC = {
     const now = Date.now(), lock = parseInt(localStorage.getItem(this.LK)||'0');
     if(now < lock) {
       const s = Math.ceil((lock-now)/1000);
-      throw new Error(`Bloqueado. Intenta en ${s}s.`);
+      const m = Math.floor(s/60), sec = s%60;
+      throw new Error(`Bloqueado. Intenta en ${m > 0 ? m+'m ' : ''}${sec}s.`);
     }
-    const stored = localStorage.getItem(this.PK), input = await this.sha(pw);
+    const stored = localStorage.getItem(this.PK), input = await this.hashPw(pw);
     if(input === stored) {
       localStorage.removeItem(this.AK);
       localStorage.removeItem(this.LK);
@@ -1455,12 +1479,12 @@ const SEC = {
     }
     const att = (parseInt(localStorage.getItem(this.AK)||'0')) + 1;
     localStorage.setItem(this.AK, att);
-    if(att >= 5) {
-      localStorage.setItem(this.LK, now + 30000);
+    if(att >= 3) {
+      localStorage.setItem(this.LK, now + 5 * 60 * 1000); // 5 minutos
       localStorage.setItem(this.AK, '0');
-      throw new Error('Demasiados intentos. Bloqueado 30s.');
+      throw new Error('Demasiados intentos. Bloqueado 5 minutos.');
     }
-    throw new Error(`Contraseña incorrecta. ${5-att} intentos restantes.`);
+    throw new Error(`Contraseña incorrecta. ${3-att} intento${3-att===1?'':'s'} restante${3-att===1?'':'s'}.`);
   },
   
   isAuth() { return !!sessionStorage.getItem(this.SK); },
@@ -1472,9 +1496,12 @@ const SEC = {
   
   async changePw(np, cp) {
     this.guard('cambiar contraseña');
-    if(np.length < 6) throw new Error('Mínimo 6 caracteres');
+    const err = this.validatePwStrength(np);
+    if(err) throw new Error(err);
     if(np !== cp) throw new Error('Las contraseñas no coinciden');
-    localStorage.setItem(this.PK, await this.sha(np));
+    // Regenerar salt al cambiar contraseña
+    localStorage.removeItem(this.SLT);
+    localStorage.setItem(this.PK, await this.hashPw(np));
   },
   
   trackActivity() {
@@ -1833,71 +1860,12 @@ function renderStickers() {
   const visible = getStickers().filter(s => s.visible);
   if (!visible.length) return;
 
-  // Safe zones: narrow strips on the left and right edges, away from center content
-  // Each zone: {side:'left'|'right', topMin, topMax} in vh units
-  const zones = [
-    {side:'left',  topMin:10, topMax:22},
-    {side:'right', topMin:10, topMax:22},
-    {side:'left',  topMin:24, topMax:38},
-    {side:'right', topMin:24, topMax:38},
-    {side:'left',  topMin:40, topMax:52},
-    {side:'right', topMin:40, topMax:52},
-  ];
-
+  const positions = ['pos-left', 'pos-right'];
   visible.forEach((s, i) => {
     const el = document.createElement('div');
-    el.className = 'float-sticker';
+    el.className = 'float-sticker ' + (positions[i % 2]);
     el.textContent = s.text;
     cont.appendChild(el);
-
-    let zoneIdx = i % zones.length;
-    let animFrame;
-
-    function pickPosition() {
-      const z = zones[zoneIdx];
-      const top = z.topMin + Math.random() * (z.topMax - z.topMin);
-      const edgeOffset = 4 + Math.random() * 10;
-      if (z.side === 'left') {
-        el.style.left = edgeOffset + 'px';
-        el.style.right = 'auto';
-      } else {
-        el.style.right = edgeOffset + 'px';
-        el.style.left = 'auto';
-      }
-      el.style.top = top + 'vh';
-    }
-
-    function animate() {
-      zoneIdx = (zoneIdx + 2 + Math.floor(Math.random() * 3)) % zones.length;
-      pickPosition();
-
-      const duration = 6000 + Math.random() * 5000;
-      const drift = (Math.random() - 0.5) * 14;
-      const startTime = performance.now();
-
-      requestAnimationFrame(() => {
-        el.style.opacity = '0';
-        requestAnimationFrame(() => {
-          el.style.transition = 'opacity 1.8s ease';
-          el.style.opacity = '0.6';
-        });
-      });
-
-      animFrame = requestAnimationFrame(function tick(now) {
-        const p = Math.min((now - startTime) / duration, 1);
-        const y = drift * Math.sin(p * Math.PI);
-        el.style.transform = `translateY(${y}px)`;
-        if (p < 1) {
-          animFrame = requestAnimationFrame(tick);
-        } else {
-          el.style.transition = 'opacity 1.6s ease';
-          el.style.opacity = '0';
-          setTimeout(animate, 1800 + Math.random() * 1200);
-        }
-      });
-    }
-
-    setTimeout(animate, i * 1400 + Math.random() * 800);
   });
 }
 
