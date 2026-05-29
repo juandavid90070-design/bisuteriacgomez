@@ -154,7 +154,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,245,2
 @keyframes hsparkleP{0%,100%{opacity:0;transform:scale(0.3) rotate(0deg)}45%,55%{opacity:1;transform:scale(1) rotate(25deg)}}
 
 /* Soft corner florals */
-.hero-floral{position:absolute;pointer-events:none;font-size:clamp(2.2rem,5vw,3.8rem);opacity:0.08;animation:floralSway ease-in-out infinite alternate;line-height:1}
+.hero-floral{position:absolute;pointer-events:none;width:clamp(40px,6vw,70px);height:clamp(40px,6vw,70px);opacity:1;animation:floralSway ease-in-out infinite alternate;line-height:1}
 @keyframes floralSway{from{transform:rotate(var(--fr)) scale(1)}to{transform:rotate(calc(var(--fr) + 8deg)) scale(1.04)}}
 .hero-floral.fl1{top:-10px;left:-8px;--fr:-18deg;animation-duration:5s}
 .hero-floral.fl2{top:-10px;right:-8px;--fr:22deg;animation-duration:6.5s;font-size:clamp(1.8rem,4vw,3rem)}
@@ -219,7 +219,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,245,2
 @keyframes blobFloat{from{transform:translate(0,0) scale(1)}to{transform:translate(12px,16px) scale(1.06)}}
 .hero-dots{display:none}
 .bg-emojis{position:fixed;inset:0;pointer-events:none;z-index:0}
-.bge{position:absolute;font-size:1.6rem;opacity:0;user-select:none;will-change:transform}
+.bge{position:absolute;font-family:'Cormorant Garamond',serif;font-size:1.2rem;opacity:0;user-select:none;will-change:transform;color:rgba(201,160,80,.35)}
 .hsticker{position:absolute;pointer-events:none;user-select:none;animation:hstickerFloat linear infinite;filter:drop-shadow(0 2px 8px rgba(180,73,106,0.12));opacity:0.55}
 @keyframes hstickerFloat{0%{transform:translateY(0) rotate(var(--r0)) scale(1)}30%{transform:translateY(-10px) rotate(calc(var(--r0) + 5deg)) scale(1.03)}60%{transform:translateY(-5px) rotate(calc(var(--r0) - 3deg)) scale(0.98)}100%{transform:translateY(0) rotate(var(--r0)) scale(1)}}
 @keyframes hshimmerBtn{0%{background-position:0% 50%}100%{background-position:200% 50%}}
@@ -270,25 +270,72 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,245,2
 .cstars{display:flex;align-items:center;gap:4px;margin-bottom:6px}
 .cstars .stars{font-size:.85rem;letter-spacing:1px}
 .cstars .rcount{font-family:'Lato',sans-serif;font-size:.7rem;color:var(--rm)}
-.cprice{font-family:'Cormorant Garamond',serif;font-size:clamp(1.05rem,3vw,1.4rem);font-weight:700;color:var(--rd);margin-bottom:8px;letter-spacing:.02em}
+.cprice{font-family:'Cormorant Garamond',serif;font-size:clamp(1.05rem,3vw,1.4rem);font-weight:700;color:var(--rd);margin-bottom:10px;letter-spacing:.02em}
 .cprice .cur{font-size:.82em;color:var(--rm);font-weight:400;margin-right:2px}
 
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.85}}
 .ot-label{font-weight:600}
 
-.card-btns{display:flex;flex-direction:column;gap:6px}
-.add-cart-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:clamp(9px,2vw,12px) 0;border-radius:var(--rbtn);background:linear-gradient(135deg,#b5496a 0%,#d4789a 50%,#b5496a 100%);background-size:200%;color:#fff;font-family:'Lato',sans-serif;font-size:clamp(.72rem,1.9vw,.86rem);font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer;transition:all .25s;-webkit-tap-highlight-color:transparent;animation:btnShimmer 3s linear infinite;box-shadow:0 3px 12px rgba(181,73,106,.22)}
-.add-cart-btn:hover{transform:scale(1.02);box-shadow:0 6px 20px rgba(181,73,106,.35)}
-.add-cart-btn svg{width:14px;height:14px;flex-shrink:0}
-.wa-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:clamp(8px,2vw,11px) 0;border-radius:var(--rbtn);background:linear-gradient(135deg,var(--rd),#8b2f4e);color:var(--gl);font-family:'Cormorant Garamond',serif;font-size:clamp(.78rem,2.1vw,.94rem);font-weight:600;border:none;cursor:pointer;text-decoration:none;transition:all .22s;box-shadow:0 3px 10px rgba(180,73,106,.22);-webkit-tap-highlight-color:transparent}
-.wa-btn:hover{background:linear-gradient(135deg,#8b2f4e,var(--rd));transform:translateY(-1px)}
+/* ── CARD BUTTONS — rediseño elegante ────── */
+.card-btns{display:flex;flex-direction:column;gap:7px}
+
+/* Botón primario: Agregar al carrito */
+.add-cart-btn{
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  width:100%;padding:clamp(10px,2vw,13px) 0;
+  border-radius:12px;
+  background:#3a1a28;
+  color:#fff;
+  font-family:'Lato',sans-serif;font-size:clamp(.72rem,1.9vw,.84rem);font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;
+  border:none;cursor:pointer;
+  transition:background .22s,transform .18s,box-shadow .22s;
+  box-shadow:0 2px 10px rgba(58,26,40,.18);
+  -webkit-tap-highlight-color:transparent
+}
+.add-cart-btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.08) 0%,transparent 60%);
+  pointer-events:none
+}
+.add-cart-btn:hover{background:#5a2a3c;transform:translateY(-2px);box-shadow:0 6px 18px rgba(58,26,40,.28)}
+.add-cart-btn:active{transform:translateY(0);box-shadow:0 2px 8px rgba(58,26,40,.18)}
+.add-cart-btn svg{width:14px;height:14px;flex-shrink:0;opacity:.85}
+
+/* Botón secundario: WhatsApp */
+.wa-btn{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  width:100%;padding:clamp(9px,2vw,12px) 0;
+  border-radius:12px;
+  background:transparent;
+  color:#b5496a;
+  font-family:'Cormorant Garamond',serif;font-size:clamp(.82rem,2.1vw,.98rem);font-weight:600;
+  letter-spacing:.04em;
+  border:1.5px solid rgba(181,73,106,.35);
+  cursor:pointer;text-decoration:none;
+  transition:all .22s;
+  -webkit-tap-highlight-color:transparent
+}
+.wa-btn:hover{background:rgba(181,73,106,.06);border-color:#b5496a;transform:translateY(-1px)}
+.wa-btn:active{transform:translateY(0)}
 .wa-btn svg{width:14px;height:14px;flex-shrink:0}
-.rev-btn{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;padding:7px 0;border-radius:var(--rbtn);background:transparent;border:1.5px solid rgba(201,160,80,.35);color:var(--g);font-family:'Cormorant Garamond',serif;font-size:clamp(.74rem,1.9vw,.88rem);font-weight:600;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+
+/* Fila inferior: Reseñas + Compartir */
 .card-btns-row2{display:flex;gap:6px}
-.card-btns-row2 .rev-btn{font-size:clamp(.62rem,1.5vw,.74rem);flex:1}
-.share-btn{display:flex;align-items:center;justify-content:center;gap:5px;flex:1;padding:7px 0;border-radius:var(--rbtn);background:transparent;border:1.5px solid rgba(181,73,106,.25);color:#b5496a;font-family:'Cormorant Garamond',serif;font-size:clamp(.62rem,1.5vw,.78rem);font-weight:600;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
-.share-btn:hover{background:rgba(181,73,106,.08);border-color:#b5496a}
-.rev-btn:hover{background:rgba(201,160,80,.08);border-color:var(--g)}
+.rev-btn,.share-btn{
+  display:flex;align-items:center;justify-content:center;gap:5px;flex:1;
+  padding:7px 0;border-radius:10px;
+  background:rgba(252,232,239,.55);
+  border:1px solid rgba(201,160,80,.18);
+  color:#9a5070;
+  font-family:'Lato',sans-serif;font-size:clamp(.62rem,1.5vw,.72rem);font-weight:600;
+  letter-spacing:.03em;
+  cursor:pointer;transition:all .18s;-webkit-tap-highlight-color:transparent
+}
+.card-btns-row2 .rev-btn{font-size:clamp(.62rem,1.5vw,.72rem)}
+.rev-btn:hover{background:rgba(201,160,80,.12);border-color:rgba(201,160,80,.4);color:#7a4050}
+.share-btn:hover{background:rgba(181,73,106,.08);border-color:rgba(181,73,106,.3);color:#b5496a}
 .empty-state{text-align:center;padding:56px 24px;display:none}
 .ver-mas-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin:28px auto 0;padding:13px 36px;background:linear-gradient(135deg,#b5496a,#d4789a);color:#fff;font-family:'Lato',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:50px;cursor:pointer;box-shadow:0 4px 16px rgba(181,73,106,.25);transition:all .3s ease}
 .ver-mas-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(181,73,106,.35)}
@@ -359,7 +406,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,245,2
 
 
 /* ── FAQ FLOATING BUTTON & MODAL ─────────── */
-.faq-fab{position:fixed;bottom:76px;right:16px;left:auto;z-index:300;background:var(--w);border:2px solid var(--g);border-radius:var(--rbtn);padding:10px 16px;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(201,160,80,.25);transition:all .2s;font-family:'Lato',sans-serif;font-weight:600;color:var(--td)}
+.faq-fab{position:fixed;bottom:124px;right:16px;left:auto;z-index:300;background:var(--w);border:2px solid var(--g);border-radius:var(--rbtn);padding:10px 16px;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(201,160,80,.25);transition:all .2s;font-family:'Lato',sans-serif;font-weight:600;color:var(--td)}
 .faq-fab:hover{transform:scale(1.05);background:var(--g);color:#fff}
 .faq-modal{position:fixed;inset:0;z-index:700;display:none}
 .faq-modal.open{display:flex;align-items:flex-end;justify-content:center}
@@ -662,7 +709,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   .frow{flex-direction:column;align-items:flex-start;gap:8px}
   .fab-wa{display:flex}
   .scroll-top{bottom:140px;right:14px}
-  .faq-fab{bottom:76px}
+  .faq-fab{bottom:90px}
 }
 @media(min-width:480px) and (max-width:767px){
   :root{--hh:60px}
@@ -676,7 +723,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   .frow{flex-direction:column;align-items:flex-start;gap:8px}
   .fab-wa{display:flex}
   .scroll-top{bottom:140px}
-  .faq-fab{bottom:76px}
+  .faq-fab{bottom:90px}
 }
 @media(min-width:768px) and (max-width:1023px){
   :root{--hh:64px}
@@ -809,11 +856,11 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   <div class="hero-blob hero-blob-3"></div>
   <div class="hero-bg" id="heroBg" style="position:absolute;inset:0;background-size:cover;background-position:center;opacity:0.18;z-index:1"></div>
 
-  <!-- Elegant corner florals -->
-  <div class="hero-floral fl1">🌸</div>
-  <div class="hero-floral fl2">🌷</div>
-  <div class="hero-floral fl3">✿</div>
-  <div class="hero-floral fl4">🌸</div>
+  <!-- Elegant corner ornaments -->
+  <div class="hero-floral fl1"><svg viewBox="0 0 40 40" fill="none" style="width:100%;height:100%"><circle cx="20" cy="20" r="8" stroke="rgba(201,160,80,0.3)" stroke-width="1"/><circle cx="20" cy="20" r="14" stroke="rgba(201,160,80,0.15)" stroke-width="1" stroke-dasharray="2 4"/><path d="M20 6 L20 34 M6 20 L34 20" stroke="rgba(201,160,80,0.2)" stroke-width="1"/><circle cx="20" cy="20" r="2" fill="rgba(201,160,80,0.4)"/></svg></div>
+  <div class="hero-floral fl2"><svg viewBox="0 0 32 32" fill="none" style="width:100%;height:100%"><path d="M16 4 L18 14 L28 16 L18 18 L16 28 L14 18 L4 16 L14 14 Z" stroke="rgba(181,73,106,0.25)" stroke-width="1" fill="rgba(181,73,106,0.06)"/></svg></div>
+  <div class="hero-floral fl3"><svg viewBox="0 0 28 28" fill="none" style="width:100%;height:100%"><rect x="10" y="10" width="8" height="8" transform="rotate(45 14 14)" stroke="rgba(201,160,80,0.3)" stroke-width="1" fill="rgba(201,160,80,0.06)"/><rect x="6" y="6" width="16" height="16" transform="rotate(45 14 14)" stroke="rgba(201,160,80,0.12)" stroke-width="1" fill="none"/></svg></div>
+  <div class="hero-floral fl4"><svg viewBox="0 0 36 36" fill="none" style="width:100%;height:100%"><circle cx="18" cy="18" r="6" stroke="rgba(181,73,106,0.2)" stroke-width="1"/><path d="M18 2 L18 34 M2 18 L34 18 M5.5 5.5 L30.5 30.5 M30.5 5.5 L5.5 30.5" stroke="rgba(181,73,106,0.1)" stroke-width="1"/></svg></div>
 
   <!-- Animated floating petals (JS populated) -->
   <div id="heroPetals"></div>
@@ -854,7 +901,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 
     <!-- CTA -->
     <div class="hero-btns-new">
-      <button class="hbtn-main" onclick="document.getElementById('catPills').scrollIntoView({behavior:'smooth',block:'start'})">Ver colección ✦</button>
+      <button class="hbtn-main" onclick="document.getElementById('catPills').scrollIntoView({behavior:'smooth',block:'start'})">Ver colección</button>
     </div>
 
     <!-- Trust badges -->
@@ -899,7 +946,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
 
 <!-- RELATED PRODUCTS -->
 <section class="related-sec" id="relatedSec">
-  <h2 class="sec-title">✨ También te puede gustar</h2>
+  <h2 class="sec-title">También te puede gustar</h2>
   <div class="prod-grid" id="relatedGrid"></div>
 </section>
 
@@ -927,16 +974,18 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
   </button>
 </footer>
 
-<a href="#" id="fabWa" class="fab-wa">
-  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2.003C6.485 2.003 2 6.486 2 12.004a9.958 9.958 0 001.47 5.223L2.008 22l4.905-1.444A9.959 9.959 0 0012.004 22C17.522 22 22 17.518 22 12.004S17.522 2.003 12.004 2.003zm0 18.185a8.17 8.17 0 01-4.17-1.143l-.299-.178-3.092.91.927-3.005-.194-.307A8.192 8.192 0 013.82 12.004c0-4.513 3.672-8.183 8.184-8.183 4.51 0 8.183 3.67 8.183 8.183 0 4.51-3.673 8.184-8.183 8.184z"/></svg>
-  Escríbenos
+<a href="#" id="fabWa" class="fab-wa" style="flex-direction:column;align-items:flex-start;gap:1px;padding:10px 16px;line-height:1.25">
+  <span style="display:flex;align-items:center;gap:6px;font-size:.78rem;opacity:.85;font-weight:400">
+    <svg viewBox="0 0 24 24" style="width:15px;height:15px;flex-shrink:0;fill:currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2.003C6.485 2.003 2 6.486 2 12.004a9.958 9.958 0 001.47 5.223L2.008 22l4.905-1.444A9.959 9.959 0 0012.004 22C17.522 22 22 17.518 22 12.004S17.522 2.003 12.004 2.003zm0 18.185a8.17 8.17 0 01-4.17-1.143l-.299-.178-3.092.91.927-3.005-.194-.307A8.192 8.192 0 013.82 12.004c0-4.513 3.672-8.183 8.184-8.183 4.51 0 8.183 3.67 8.183 8.183 0 4.51-3.673 8.184-8.183 8.184z"/></svg>
+    ¿Deseas un producto personalizado?
+  </span>
+  <span style="font-size:.9rem;font-weight:700">¡Toca aquí! ✨</span>
 </a>
 <button class="scroll-top" id="stBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Arriba">↑</button>
 
 <!-- FAQ FLOATING BUTTON -->
 <button class="faq-fab" id="faqFab">
-  <span>❓</span>
-  <span class="faq-label">¿Preguntas?</span>
+  <span class="faq-label">Preguntas frecuentes</span>
 </button>
 
 <!-- FAQ MODAL -->
@@ -1030,7 +1079,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;back
       <input class="rev-inp" id="revAuthor" placeholder="Tu nombre *" maxlength="50"/>
       <textarea class="rev-ta" id="revText" placeholder="Cuéntanos tu experiencia con este producto… *" maxlength="400" rows="3"></textarea>
       <p class="rev-err" id="revErr"></p>
-      <button class="rev-submit" id="revSubmit">Publicar reseña ✦</button>
+      <button class="rev-submit" id="revSubmit">Publicar reseña</button>
     </div>
   </div>
 </div>
@@ -1392,6 +1441,11 @@ const WA_MESSAGES = {
   // ── Catálogo general / botones directos ──────────
   catalog: () => {
     return `Hola Carolina, me gustaría más información sobre tus productos.`;
+  },
+
+  // ── Producto personalizado (FAB) ──────────────────
+  custom: () => {
+    return `Hola Carolina 💖 quiero un producto personalizado, ¿me puedes dar una recomendación?`;
   },
 
   // ── Producto individual ───────────────────────────
@@ -1885,7 +1939,7 @@ function applyApp() {
   }
   const waNum = a.waNum || WA_NUM;
   const gl = `https://wa.me/${waNum}?text=${encodeURIComponent(WA_MESSAGES.catalog())}`;
-  ['hdrWa','ftWa','fabWa','faqWa'].forEach(id => {
+  ['hdrWa','ftWa','faqWa'].forEach(id => {
     const el = document.getElementById(id);
     if(el) {
       el.href = `https://wa.me/${waNum}?text=${encodeURIComponent(WA_MESSAGES.catalog())}`;
@@ -1897,6 +1951,17 @@ function applyApp() {
       };
     }
   });
+  // FAB: mensaje de producto personalizado
+  const fabWa = document.getElementById('fabWa');
+  if(fabWa) {
+    fabWa.href = `https://wa.me/${waNum}?text=${encodeURIComponent(WA_MESSAGES.custom())}`;
+    fabWa.onclick = (e) => {
+      e.preventDefault();
+      const msg = encodeURIComponent(WA_MESSAGES.custom());
+      window.open(`https://wa.me/${waNum}?text=${msg}`, '_blank');
+      MET.inc('wa', 'custom');
+    };
+  }
 }
 
 function renderTicker() {
@@ -2183,12 +2248,22 @@ function renderCard(p, cardIndex = 0) {
       <div class="cprice"><span class="cur">COP</span>${fmt(p.price)}</div>
       <div class="card-btns">
         <button class="add-cart-btn" data-id="${p.id}" data-name="${sanitize(p.name)}" data-price="${p.price}">
-          ${CART_SVG} Agregar
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          Agregar al carrito
         </button>
-        <button class="wa-btn" data-pid="${p.id}" data-pname="${sanitize(p.name)}">💬 Pedir por WhatsApp</button>
+        <button class="wa-btn" data-pid="${p.id}" data-pname="${sanitize(p.name)}">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2.003C6.485 2.003 2 6.486 2 12.004a9.958 9.958 0 001.47 5.223L2.008 22l4.905-1.444A9.959 9.959 0 0012.004 22C17.522 22 22 17.518 22 12.004S17.522 2.003 12.004 2.003z"/></svg>
+          Pedir por WhatsApp
+        </button>
         <div class="card-btns-row2">
-          <button class="rev-btn" data-pid="${p.id}" data-pname="${sanitize(p.name)}">⭐ Reseñas (${revs})</button>
-          <button class="share-btn" data-pid="${p.id}" data-pname="${sanitize(p.name)}" data-price="${p.price}">🔗 Compartir</button>
+          <button class="rev-btn" data-pid="${p.id}" data-pname="${sanitize(p.name)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;flex-shrink:0"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Reseñas${revs > 0 ? ` · ${revs}` : ''}
+          </button>
+          <button class="share-btn" data-pid="${p.id}" data-pname="${sanitize(p.name)}" data-price="${p.price}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;flex-shrink:0"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Compartir
+          </button>
         </div>
       </div>
     </div>
@@ -4175,7 +4250,7 @@ window.addEventListener('scroll', () => {
 // EMOJIS FLOTANTES DE FONDO
 // ═══════════════════════════════════════════════════
 (function() {
-  const EMOJIS = ['😍','💅','🤩','⭐','💖','💕','🌟','🌸','✨','💫'];
+  const EMOJIS = ['◆','◇','✦','✧','⬥','·','✶','◈','❖','✦'];
   const container = document.querySelector('.bg-emojis');
   if (!container) return;
 
