@@ -2119,13 +2119,26 @@ function avgRating(pid) {
   return r.length ? Math.round(r.reduce((s,x) => s+x.rating, 0) / r.length * 10) / 10 : 0;
 }
 
-function renderCard(p) {
+// Agrega ?width=400 a URLs de ImgBB para servir thumbnails optimizados
+function ibbThumb(src) {
+  if (!src) return src;
+  if (src.includes('i.ibb.co') && !src.includes('?')) return src + '?width=400';
+  return src;
+}
+
+function renderCard(p, cardIndex = 0) {
   const avg = avgRating(p.id), revs = getProductRevs(p.id).length;
   const badge = p.badge ? `<span class="cbadge ${p.badge}">${p.badge==='nuevo'?'✦ Nuevo':'🔥 Oferta'}</span>` : '';
   const timer = '';
   const starHtml = avg > 0 ? `<span class="stars" style="color:#e8a020">${stars(Math.round(avg))}</span><span class="rcount">${avg} (${revs})</span>` : `<span class="rcount">Sin reseñas aún</span>`;
-  const imgs = getImages(p);
+  const imgs = getImages(p).map(ibbThumb);
   const videoUrl = p.video || (p.images && p.images.find(isVideoUrl)) || '';
+
+  // Las primeras 4 cards cargan eager + fetchpriority high; el resto lazy
+  const isAboveFold = cardIndex < 4;
+  const loadAttr = isAboveFold ? 'eager' : 'lazy';
+  const priorityAttr = isAboveFold ? ' fetchpriority="high"' : '';
+  const sizeAttrs = ' width="400" height="400"';
 
   let imgHtml;
   const allMedia = [...imgs, ...(videoUrl ? ['__video__'] : [])];
@@ -2133,10 +2146,10 @@ function renderCard(p) {
   if(allMedia.length === 0) {
     imgHtml = `<div class="emj" onclick="GALLERY.open(getProds().find(x=>x.id=='${p.id}'))" style="cursor:pointer">${p.emoji||'💎'}</div>`;
   } else if(allMedia.length === 1 && !videoUrl) {
-    imgHtml = `<img src="${imgs[0]}" alt="${sanitize(p.name)}" loading="lazy" onclick="GALLERY.open(getProds().find(x=>x.id=='${p.id}'))" style="cursor:pointer;width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>`;
+    imgHtml = `<img src="${imgs[0]}" alt="${sanitize(p.name)}" loading="${loadAttr}"${priorityAttr}${sizeAttrs} onclick="GALLERY.open(getProds().find(x=>x.id=='${p.id}'))" style="cursor:pointer;width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>`;
   } else {
     const slides = imgs.map((src, i) =>
-      `<img class="slide-img${i===0&&!videoUrl?' active':''}" src="${src}" alt="${sanitize(p.name)} ${i+1}" loading="${i===0?'eager':'lazy'}" onclick="GALLERY.open(getProds().find(x=>x.id=='${p.id}'))" style="cursor:pointer"/>`
+      `<img class="slide-img${i===0&&!videoUrl?' active':''}" src="${src}" alt="${sanitize(p.name)} ${i+1}"${sizeAttrs} loading="${i===0 ? loadAttr : 'lazy'}"${i===0 ? priorityAttr : ''} onclick="GALLERY.open(getProds().find(x=>x.id=='${p.id}'))" style="cursor:pointer"/>`
     ).join('');
     const videoSlide = videoUrl
       ? `<div class="slide-video-wrap${imgs.length===0?' active':''}" style="position:absolute;inset:0;display:${imgs.length===0?'block':'none'};background:#000">
@@ -2275,7 +2288,7 @@ function renderAll(resetPage = true) {
   const empty = document.getElementById('emptyState');
   const cnt = document.getElementById('rcnt');
   const visible = f.slice(0, _visibleCount);
-  grid.innerHTML = visible.map(renderCard).join('');
+  grid.innerHTML = visible.map((p, i) => renderCard(p, i)).join('');
   empty.style.display = f.length === 0 ? 'block' : 'none';
   cnt.textContent = f.length ? `Mostrando ${visible.length} de ${f.length} producto${f.length!==1?'s':''}` : 'Sin resultados';
 
